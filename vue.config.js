@@ -17,7 +17,7 @@ module.exports = {
     /* 自动打开浏览器 */
     open: true,
     /* 设置为0.0.0.0则所有的地址均能访问 */
-    host: '0.0.0.0',
+    host: "0.0.0.0",
     port: 8066,
     // https: true,
     hotOnly: true,
@@ -31,25 +31,5 @@ module.exports = {
         changeOrigin: true
       }
     }
-    /*css: {
-      loaderOptions: {
-        css: {},
-        // sass: {
-        //   data: '@import "@styles/skin.scss"'
-        // },
-        postcss: {
-          plugins: [
-            require('postcss-px2rem')({
-              remUnit: 75,
-              propList: ['*'],
-              mediaQuery: false, // 允许在媒体查询中转换px。
-              exclude: '/node_modules/',
-              minPixelValue: 3, //设置要替换的最小像素值(3px会被转rem)。 默认 0
-              selectorBlackList: ['weui', 'mu'] // 忽略转换正则匹配项
-            })
-          ]
-        }
-      }
-    }*/
   }
 };
