@@ -2,10 +2,10 @@
   <div id="index">
     <div class="header">
       首页
-      <!-- <div class="back" @click="goBack">
-        首页
+      <div class="back" @click="goBack">
+        返回
         <div class="back-icon"></div>
-      </div>-->
+      </div>
       <!-- <span class="qrcode" @click="isShowQrcode = true">打卡二维码</span> -->
     </div>
     <div class="children-list">
@@ -19,21 +19,31 @@
             <div class="logo"></div>
           </div>
           <div class="values">
-            <div class="child-name">
-              王子易
-            </div>
+            <div class="child-name">王子易</div>
             <div class="idCard">320623199509244538</div>
           </div>
         </div>
       </div>
     </div>
-    <div class="apply-button">添加新申请</div>
+    <div class="apply-button" @click="addNewApply">添加新申请</div>
   </div>
 </template>
 <script>
 export default {
   data() {
     return {};
+  },
+  methods: {
+    addNewApply() {
+      this.$router.push({
+        path: "/addChild"
+      });
+    },
+    goBack() {
+      this.$router.push({
+        path: "/login"
+      });
+    }
   }
 };
 </script>

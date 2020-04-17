@@ -37,7 +37,7 @@
       <div class="switch-button">
         <span @click="isLogin = !isLogin">{{ isLogin ? "注册" : "登录" }}</span>
       </div>
-      <div class="login-button" v-if="isLogin">登录</div>
+      <div class="login-button" v-if="isLogin" @click="login">登录</div>
       <div class="register-button" v-else>注册</div>
     </div>
   </div>
@@ -55,6 +55,11 @@ export default {
     this.bodyHeight = document.documentElement.clientHeight;
   },
   methods: {
+    login() {
+      this.$router.push({
+        path: "/index"
+      });
+    },
     blur() {
       blur();
     }

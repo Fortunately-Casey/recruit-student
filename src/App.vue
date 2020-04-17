@@ -24,6 +24,9 @@ html,
 body {
   height: 100%;
 }
+::-webkit-scrollbar {
+  width: 0 !important;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -38,6 +41,7 @@ input {
   margin-top: 5px;
   border-radius: 0;
   font-size: 14px;
+   -webkit-appearance: none; 
 }
 
 input[type="text"]:focus {

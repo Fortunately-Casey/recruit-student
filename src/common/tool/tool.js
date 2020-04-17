@@ -1,9 +1,9 @@
-/* eslint-disable prettier/prettier */
-import {
-    Toast
-} from "mint-ui";
+/* eslint-disable prettier/prettier */;
 
-
+/**
+ * 时间转换
+ * @param {*} s
+ */
 export function Todate(chinadatetime) { //Fri Oct 31 18:00:00 UTC+0800 2008 
     if (chinadatetime) {
         var d = new Date(chinadatetime);
@@ -16,6 +16,10 @@ export function Todate(chinadatetime) { //Fri Oct 31 18:00:00 UTC+0800 2008
     }
 }
 
+/**
+ * 移动端键盘影响页面布局
+ * @param {*} s
+ */
 export function blur() {
     setTimeout(function () {
         window.scrollTo(0, document.body.scrollTop + 1);
@@ -23,6 +27,10 @@ export function blur() {
     }, 10);
 }
 
+/**
+ * 环境配置
+ * @param {*} s
+ */
 export function getURL(url) {
     let _result = '';
     if (process.env.NODE_ENV === 'development') {
@@ -33,8 +41,11 @@ export function getURL(url) {
     }
     return _result;
 }
-
-export function chinaDateTime(chinadatetime) { 
+/**
+ * 国际标准时
+ * @param {*} s
+ */
+export function chinaDateTime(chinadatetime) {
     // // 转为正常的时间格式 年-月-日 时:分:秒
     // var T_pos = utc_datetime.indexOf('T');
     // var Z_pos = utc_datetime.indexOf('Z');
@@ -61,6 +72,10 @@ export function chinaDateTime(chinadatetime) {
     var datetime = d.getFullYear() + '-' + month + '-' + date + ' ' + hour + ':' + minutes;
     return datetime;
 }
+/**
+ * 时间转换
+ * @param {*} s
+ */
 export function Totime(time) {
     var d = new Date(time);
     var hour = d.getHours() >= 10 ? d.getHours() : "0" + d.getHours();
@@ -77,7 +92,10 @@ export function compare(property) {
         return value1 - value2;
     }
 }
-
+/**
+ * class方式创建地址对象
+ * @param {*} s
+ */
 export default class AddressName {
     constructor({
         id,
@@ -92,7 +110,10 @@ export default class AddressName {
     }
 }
 
-// 防抖
+/**
+ * 防抖
+ * @param {*} s
+ */
 export function debounce(fn, delay) {
     let timer = null
     return function () {
@@ -106,14 +127,34 @@ export function debounce(fn, delay) {
     }
 }
 
-// 手机验证
-export function phoneReg(value) {
-    var phoneReg = /^1[3456789]\d{9}$/;
-    if (!phoneReg.test(Number(value))) {
-        Toast({
-            message: "请输入合法手机号！",
-            iconClass: "icon icon-success"
-        });
-        return;
-    }
+/**
+ * 邮箱
+ * @param {*} s
+ */
+export function isEmail(s) {
+    return /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(s)
+}
+
+/**
+ * 手机号码
+ * @param {*} s
+ */
+export function isMobile(s) {
+    return /^1[0-9]{10}$/.test(s)
+}
+
+/**
+ * 电话号码
+ * @param {*} s
+ */
+export function isPhone(s) {
+    return /^([0-9]{3,4}-)?[0-9]{7,8}$/.test(s)
+}
+
+/**
+ * URL地址
+ * @param {*} s
+ */
+export function isURL(s) {
+    return /^http[s]?:\/\/.*/.test(s)
 }
