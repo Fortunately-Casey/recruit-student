@@ -13,42 +13,78 @@
       <div class="login" v-if="isLogin">
         <div class="input">
           <div class="user-icon"></div>
-          <input type="number" placeholder="请填写用户名" @blur="blur" />
+          <input
+            type="number"
+            placeholder="请填写用户名"
+            @blur="blur"
+            v-model="username"
+          />
         </div>
         <div class="input" style="margin-bottom:5px">
           <div class="pw-icon"></div>
-          <input type="password" placeholder="输入密码" @blur="blur" />
+          <input
+            type="text"
+            placeholder="输入密码"
+            @blur="blur"
+            style="-webkit-text-security:disc;text-security:disc;"
+            v-model="userPW"
+          />
         </div>
       </div>
       <div class="register" v-else>
         <div class="input">
           <div class="user-icon"></div>
-          <input type="number" placeholder="请填写用户名" @blur="blur" />
+          <input
+            type="number"
+            placeholder="请填写用户名"
+            @blur="blur"
+            v-model="adminUserID"
+          />
         </div>
         <div class="input">
           <div class="pw-icon"></div>
-          <input type="password" placeholder="输入密码" @blur="blur" />
+          <input
+            type="text"
+            placeholder="输入密码"
+            @blur="blur"
+            v-model="password"
+            style="-webkit-text-security:disc;text-security:disc;"
+          />
         </div>
         <div class="input" style="margin-bottom:5px">
           <div class="pw-icon"></div>
-          <input type="password" placeholder="确认密码" @blur="blur" />
+          <input
+            type="text"
+            placeholder="确认密码"
+            @blur="blur"
+            v-model="confirmPassword"
+            style="-webkit-text-security:disc;text-security:disc;"
+          />
         </div>
       </div>
       <div class="switch-button">
         <span @click="isLogin = !isLogin">{{ isLogin ? "注册" : "登录" }}</span>
       </div>
       <div class="login-button" v-if="isLogin" @click="login">登录</div>
-      <div class="register-button" v-else>注册</div>
+      <div class="register-button" v-else @click="register">注册</div>
     </div>
   </div>
 </template>
 <script>
 import { blur } from "@/common/tool/tool";
+import * as api from "@/service/apiList";
+import http from "@/service/service";
+import { Notify } from "vant";
 export default {
   data() {
     return {
       isLogin: true,
-      bodyHeight: ""
+      bodyHeight: "",
+      adminUserID: "",
+      password: "",
+      confirmPassword: "",
+      username: "",
+      userPW: ""
     };
   },
   mounted() {
@@ -56,8 +92,49 @@ export default {
   },
   methods: {
     login() {
-      this.$router.push({
-        path: "/index"
+      let vm = this;
+      if (!vm.username || !vm.userPW) {
+        Notify({ type: "warning", message: "账号密码不能为空" });
+        return;
+      }
+      let params = {
+        adminUserID: vm.username,
+        password: vm.userPW,
+        type: 1
+      };
+      http.post(api.Login, params).then(resp => {
+        if (resp.data.success) {
+          Notify({ type: "success", message: "登录成功" });
+          window.localStorage.setItem("token", resp.data.data.token);
+          this.$router.push({
+            path: "/index"
+          });
+        } else {
+          Notify({ type: "danger", message: resp.data.message });
+        }
+      });
+    },
+    register() {
+      let vm = this;
+      if (!vm.adminUserID || !vm.password || !vm.confirmPassword) {
+        Notify({ type: "warning", message: "账号密码不能为空" });
+        return;
+      }
+      let params = {
+        adminUserID: vm.adminUserID,
+        password: vm.password,
+        confirmPassword: vm.confirmPassword
+      };
+      http.post(api.REGISTERED, params).then(resp => {
+        if (resp.data.success) {
+          Notify({ type: "success", message: "注册成功" });
+          vm.adminUserID = "";
+          vm.password = "";
+          vm.confirmPassword = "";
+          vm.isLogin = true;
+        } else {
+          Notify({ type: "danger", message: resp.data.message });
+        }
       });
     },
     blur() {

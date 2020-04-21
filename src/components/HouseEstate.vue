@@ -6,26 +6,26 @@
     <div class="city-list">
       <div class="city-top">
         选择地区
-        <div class="icon-close" @click="closeAddressMatching"></div>
+        <div class="icon-close" @click="closeHouseEstate"></div>
       </div>
-      <div class="select-province" v-show="isShowProvince">
-        <div class="select-title">选择省</div>
+      <div class="select-province" v-show="isShowStreetList">
+        <div class="select-title">选择街道</div>
         <scroll class="wrapper1">
           <ul>
-            <li v-for="(item, index) in provinceList" :key="index">
-              <div class="province" @click="choseProvince(item)">
+            <li v-for="(item, index) in streetList" :key="index">
+              <div class="province" @click="choseStreet(item)">
                 <div class="label" style="width:0"></div>
-                <div class="name">{{ item.name }}</div>
+                <div class="name">{{ item.streetName }}</div>
               </div>
             </li>
           </ul>
         </scroll>
       </div>
       <div class="selected" v-show="isShowCity">
-        <span class="selected-area" @click="selectCity">
-          {{ selectAddress.chosedProvince }}
-        </span>
-        <span class="selectCityButton">选择市</span>
+        <span class="selected-area" @click="selectCity">{{
+          selectAddress.chosedProvince
+        }}</span>
+        <span class="selectCityButton">选择社区</span>
       </div>
       <div class="select-street" v-if="isShowCity">
         <scroll class="wrapper2">
@@ -40,13 +40,13 @@
         </scroll>
       </div>
       <div class="selected" v-show="isShowTown">
-        <span class="selected-area" @click="selectCity">
-          {{ selectAddress.chosedProvince }}
-        </span>
-        <span class="selected-street" @click="selectNTStreet">
-          {{ selectAddress.chosedCity }}
-        </span>
-        <span class="selectCityButton">选择区/县</span>
+        <span class="selected-area" @click="selectCity">{{
+          selectAddress.chosedProvince
+        }}</span>
+        <span class="selected-street" @click="selectNTStreet">{{
+          selectAddress.chosedCity
+        }}</span>
+        <span class="selectCityButton">选择小区</span>
       </div>
       <div class="select-area" v-if="isShowTown">
         <scroll class="wrapper3">
@@ -72,10 +72,10 @@ export default {
   data() {
     return {
       loading: false,
-      isShowProvince: true,
+      isShowStreetList: true,
       isShowCity: false,
       isShowTown: false,
-      provinceList: [],
+      streetList: [],
       selectAddress: {
         chosedProvince: "",
         chosedCity: "",
@@ -90,36 +90,36 @@ export default {
     var vm = this;
     //获取南通区县
     vm.loading = true;
-    http.get(api.GETPROVINCEAREA).then(resp => {
+    http.get(api.GETSTREETLIST).then(resp => {
       vm.loading = false;
-      vm.provinceList = resp.data.data;
+      vm.streetList = resp.data.data;
     });
   },
   methods: {
-    closeAddressMatching() {
-      this.$emit("closeAddress", {
+    closeHouseEstate() {
+      this.$emit("closeHouse", {
         isShow: false
       });
     },
     // 选择南通区县
-    choseProvince(item) {
+    choseStreet(item) {
       var vm = this;
       vm.loading = true;
       http
-        .get(api.GETCITYLIST, {
-          parentID: item.id
+        .get(api.GETCOMMUNITYLIST, {
+          streetID: item.streetID
         })
         .then(resp => {
           vm.loading = false;
           vm.cityList = resp.data.data;
-          vm.selectAddress.chosedProvince = item.name;
-          vm.isShowProvince = false;
+          vm.selectAddress.chosedProvince = item.streetName;
+          vm.isShowStreetList = false;
           vm.isShowCity = true;
           vm.isShowTown = false;
         });
     },
     selectCity() {
-      this.isShowProvince = true;
+      this.isShowStreetList = true;
       this.isShowCity = false;
       this.isShowTown = false;
       this.selectAddress.chosedProvince = "";
@@ -127,7 +127,7 @@ export default {
       this.selectAddress.chosedTown = "";
     },
     selectNTStreet() {
-      this.isShowProvince = false;
+      this.isShowStreetList = false;
       this.isShowCity = true;
       this.isShowTown = false;
       this.selectAddress.chosedCity = "";
@@ -135,12 +135,12 @@ export default {
     },
     choseCity(item) {
       let vm = this;
-      vm.isShowProvince = false;
+      vm.isShowStreetList = false;
       vm.isShowCity = false;
       vm.loading = true;
       http
-        .get(api.GETCITYLIST, {
-          parentID: item.id
+        .get(api.GETSMALLCOMMUNITYBYCOMMUNITYID, {
+          communityID: item.id
         })
         .then(resp => {
           vm.loading = false;
@@ -151,12 +151,11 @@ export default {
           } else {
             vm.selectAddress.chosedCity = item.name;
             vm.selectAddress.chosedTown = item.name;
-            this.$emit("choseAddress", {
+            this.$emit("choseHouse", {
               isShow: false,
               chosedValue: {
-                province: this.selectAddress.chosedProvince,
-                city: this.selectAddress.chosedCity,
-                town: this.selectAddress.chosedTown
+                houseEstate: this.selectAddress.chosedTown,
+                id: item.id
               }
             });
             this.selectCity();
@@ -165,12 +164,11 @@ export default {
     },
     choseTown(item) {
       this.selectAddress.chosedTown = item.name;
-      this.$emit("choseAddress", {
+      this.$emit("choseHouse", {
         isShow: false,
         chosedValue: {
-          province: this.selectAddress.chosedProvince,
-          city: this.selectAddress.chosedCity,
-          town: this.selectAddress.chosedTown
+          houseEstate: this.selectAddress.chosedTown,
+          id: item.id
         }
       });
       this.selectCity();

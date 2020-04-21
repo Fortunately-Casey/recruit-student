@@ -29,11 +29,21 @@
   </div>
 </template>
 <script>
+import * as api from "@/service/apiList";
+import http from "@/service/service";
 export default {
   data() {
     return {};
   },
+  created() {
+    this.getStudentByAdmissionID();
+  },
   methods: {
+    getStudentByAdmissionID() {
+      http.get(api.GETSTUDENTBYADMISSIONID).then(resp => {
+        console.log(resp.data.data);
+      });
+    },
     addNewApply() {
       this.$router.push({
         path: "/addChild"

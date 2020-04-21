@@ -22,6 +22,12 @@
             <input type="text" v-model="idCard" @blur="blur" />
           </div>
         </div>
+        <div class="item">
+          <div class="name">出生日期</div>
+          <div class="value" @click="isShowBirthday = true">
+            <span>{{ todate(birthday) }}</span>
+          </div>
+        </div>
       </div>
       <div class="address-box">
         <div class="item">
@@ -36,18 +42,15 @@
             <div class="item-name">{{ domicileAddress.city }}</div>
             <div class="item-name">{{ domicileAddress.town }}</div>
           </div>
-          <input
-            type="text"
-            placeholder="详细地址：道路、门牌号、楼栋号、单元号"
-            @blur="blur"
-          />
+          <input type="text" placeholder="详细地址：道路、门牌号、楼栋号、单元号" @blur="blur" />
         </div>
       </div>
       <div class="live-info">
         <div class="item">
           <div class="name">现居住小区</div>
-          <div class="value">
-            <div class="icon"></div>
+          <div class="value" @click="selectHouse">
+            <div class="icon" v-if="chosedHouseEstate ? false : true"></div>
+            <span v-else>{{ chosedHouseEstate }}</span>
           </div>
         </div>
         <div class="item">
@@ -158,9 +161,7 @@
         </div>
         <div class="item">
           <div class="name">取得/购买时间</div>
-          <div class="value" @click="choseGetHouseTime">
-            {{ todate(getHouseTime) }}
-          </div>
+          <div class="value" @click="choseGetHouseTime">{{ todate(getHouseTime) }}</div>
         </div>
       </div>
       <div class="house-number">
@@ -195,29 +196,22 @@
         <div class="item">
           <div class="name">报名承诺书</div>
         </div>
-        <div class="commit-text">
-          本人承诺：如有弄虚作假，提供虚假材料的，一经发现，对其已入学子女作退学或转学处理，由此产生的不良影响，本人愿意承担一切后果
-        </div>
+        <div class="commit-text">本人承诺：如有弄虚作假，提供虚假材料的，一经发现，对其已入学子女作退学或转学处理，由此产生的不良影响，本人愿意承担一切后果</div>
       </div>
       <div class="accept" :class="accept ? 'chosed' : ''">
-        <van-checkbox v-model="accept" shape="square"
-          >我已阅读并接受</van-checkbox
-        >
+        <van-checkbox v-model="accept" shape="square">我已阅读并接受</van-checkbox>
       </div>
       <div
         class="commit-button"
         :class="accept ? 'enable' : 'disable'"
         v-if="step === 4"
         @click="confirm"
-      >
-        提交（{{ step }}/4）
-      </div>
+      >提交（{{ step }}/4）</div>
       <van-popup v-model="isShowAffirm" round closeable>
         <div class="commit-affirm">
           <div class="text">
             预报名申请提交后信息
-            <span style="color:#ff3636">不可修改</span
-            >，请仔核对填报信息后提交！
+            <span style="color:#ff3636">不可修改</span>，请仔核对填报信息后提交！
           </div>
           <div class="buttons">
             <div class="canncel" @click="isShowAffirm = false">再想想</div>
@@ -226,14 +220,13 @@
         </div>
       </van-popup>
     </div>
-    <div class="step-button" v-if="step !== 4" @click="nextStep">
-      下一步（{{ step }}/4）
-    </div>
+    <div class="step-button" v-if="step !== 4" @click="nextStep">下一步（{{ step }}/4）</div>
     <address-matching
-      :isShow="isAddress"
+      :isShow="isShowAddress"
       @choseAddress="choseAddress"
       @closeAddress="closeAddress"
     ></address-matching>
+    <house-estate :isShow="isShowHouse" @choseHouse="choseHouse" @closeHouse="closeHouse"></house-estate>
     <div class="date-time" v-if="isShowPurchaseDate">
       <van-datetime-picker
         v-model="purchaseDate"
@@ -244,16 +237,31 @@
         @cancel="canncelPurchaseDate"
       />
     </div>
+    <div class="date-time" v-if="isShowBirthday">
+      <van-datetime-picker
+        v-model="selectBirthday"
+        type="date"
+        :min-date="minDate"
+        :max-date="maxDate"
+        @confirm="confirmBirthday"
+        @cancel="canncelBirthday"
+      />
+    </div>
   </div>
 </template>
 <script>
 import { blur, Todate } from "@/common/tool/tool";
 import { Notify } from "vant";
 import AddressMatching from "@/components/AddressMatching.vue";
+import HouseEstate from "@/components/HouseEstate.vue";
+import * as api from "@/service/apiList";
+import http from "@/service/service";
 export default {
   data() {
     return {
-      isAddress: false,
+      isShowAddress: false,
+      isShowHouse: false,
+      isShowBirthday: false,
       userName: "",
       idCard: "",
       step: 1,
@@ -294,10 +302,13 @@ export default {
       chosedHouseIndex: 0,
       getHouseTime: new Date(),
       purchaseDate: new Date(),
+      selectBirthday: new Date(),
+      birthday: new Date(),
       minDate: new Date(2000, 0, 1),
       maxDate: new Date(),
       isShowAffirm: false,
-      isShowPurchaseDate: false
+      isShowPurchaseDate: false,
+      chosedHouseEstate: ""
     };
   },
   methods: {
@@ -311,15 +322,44 @@ export default {
     canncelPurchaseDate() {
       this.isShowPurchaseDate = false;
     },
+    confirmBirthday(date) {
+      this.birthday = this.todate(date);
+      this.isShowBirthday = false;
+    },
+    canncelBirthday() {
+      this.isShowBirthday = false;
+    },
     choseAddress(address) {
-      this.isAddress = address.isShow;
+      this.isShowAddress = address.isShow;
       this.domicileAddress = address.chosedValue;
     },
+    choseHouse(house) {
+      this.isShowHouse = house.isShow;
+      this.chosedHouseEstate = house.chosedValue.houseEstate;
+      console.log(house);
+      let params = {
+        smallCommunityID: house.chosedValue.id,
+        birthday: this.todate(this.birthday)
+      };
+      http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params).then(resp => {
+        console.log(resp.data.data);
+      });
+    },
     closeAddress() {
-      this.isAddress = false;
+      this.isShowAddress = false;
+    },
+    closeHouse() {
+      this.isShowHouse = false;
+    },
+    selectHouse() {
+      if (!this.birthday) {
+        Notify({ type: "warning", message: "请选择生日后进行学校匹配" });
+        return;
+      }
+      this.isShowHouse = true;
     },
     selectAddress() {
-      this.isAddress = true;
+      this.isShowAddress = true;
     },
     topStep() {
       if (this.step === 1) {
@@ -358,7 +398,8 @@ export default {
     }
   },
   components: {
-    AddressMatching
+    AddressMatching,
+    HouseEstate
   }
 };
 </script>
