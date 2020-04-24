@@ -22,9 +22,7 @@
         </scroll>
       </div>
       <div class="selected" v-show="isShowCity">
-        <span class="selected-area" @click="selectCity">
-          {{ selectAddress.chosedProvince }}
-        </span>
+        <span class="selected-area" @click="selectCity">{{ selectAddress.chosedProvince }}</span>
         <span class="selectCityButton">选择市</span>
       </div>
       <div class="select-street" v-if="isShowCity">
@@ -40,12 +38,8 @@
         </scroll>
       </div>
       <div class="selected" v-show="isShowTown">
-        <span class="selected-area" @click="selectCity">
-          {{ selectAddress.chosedProvince }}
-        </span>
-        <span class="selected-street" @click="selectNTStreet">
-          {{ selectAddress.chosedCity }}
-        </span>
+        <span class="selected-area" @click="selectCity">{{ selectAddress.chosedProvince }}</span>
+        <span class="selected-street" @click="selectNTStreet">{{ selectAddress.chosedCity }}</span>
         <span class="selectCityButton">选择区/县</span>
       </div>
       <div class="select-area" v-if="isShowTown">
@@ -78,8 +72,11 @@ export default {
       provinceList: [],
       selectAddress: {
         chosedProvince: "",
+        provinceID: 0,
         chosedCity: "",
-        chosedTown: ""
+        cityID: 0,
+        chosedTown: "",
+        areaID: 0
       },
       cityList: [],
       townList: []
@@ -105,6 +102,7 @@ export default {
     choseProvince(item) {
       var vm = this;
       vm.loading = true;
+      vm.selectAddress.provinceID = item.id;
       http
         .get(api.GETCITYLIST, {
           parentID: item.id
@@ -138,6 +136,7 @@ export default {
       vm.isShowProvince = false;
       vm.isShowCity = false;
       vm.loading = true;
+      vm.selectAddress.cityID = item.id;
       http
         .get(api.GETCITYLIST, {
           parentID: item.id
@@ -165,12 +164,16 @@ export default {
     },
     choseTown(item) {
       this.selectAddress.chosedTown = item.name;
+      this.selectAddress.areaID = item.id;
       this.$emit("choseAddress", {
         isShow: false,
         chosedValue: {
           province: this.selectAddress.chosedProvince,
           city: this.selectAddress.chosedCity,
-          town: this.selectAddress.chosedTown
+          town: this.selectAddress.chosedTown,
+          provinceID: this.selectAddress.provinceID,
+          cityID: this.selectAddress.cityID,
+          areaID: this.selectAddress.areaID
         }
       });
       this.selectCity();

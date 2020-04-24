@@ -8,21 +8,25 @@
       </div>
       <!-- <span class="qrcode" @click="isShowQrcode = true">打卡二维码</span> -->
     </div>
-    <div class="children-list">
-      <div class="item" v-for="(item, index) in 3" :key="index">
-        <div class="number">
-          <div class="name">预报名码</div>
-          <div class="number-code">01200001</div>
-        </div>
-        <div class="info">
-          <div class="info-logo">
-            <div class="logo"></div>
+    <div class="children-list" v-if="isReloadList">
+      <div v-for="(item, index) in childList" :key="index" @click="goToDetail(item)">
+        <left-slider :index="index" @deleteItem="deleteItem(item)" :ref="item.rowNumber">
+          <div class="item">
+            <div class="number">
+              <div class="name">预报名码</div>
+              <div class="number-code">{{ item.forecastCode }}</div>
+            </div>
+            <div class="info">
+              <div class="info-logo">
+                <div class="logo"></div>
+              </div>
+              <div class="values">
+                <div class="child-name">{{ item.name }}</div>
+                <div class="idCard">{{ item.idCard }}</div>
+              </div>
+            </div>
           </div>
-          <div class="values">
-            <div class="child-name">王子易</div>
-            <div class="idCard">320623199509244538</div>
-          </div>
-        </div>
+        </left-slider>
       </div>
     </div>
     <div class="apply-button" @click="addNewApply">添加新申请</div>
@@ -31,17 +35,25 @@
 <script>
 import * as api from "@/service/apiList";
 import http from "@/service/service";
+import { Indicator } from "mint-ui";
+import LeftSlider from "@/components/LeftSlider";
+import { Notify, Dialog } from "vant";
 export default {
   data() {
-    return {};
+    return {
+      childList: [],
+      isReloadList: true
+    };
   },
   created() {
     this.getStudentByAdmissionID();
   },
   methods: {
     getStudentByAdmissionID() {
+      Indicator.open();
       http.get(api.GETSTUDENTBYADMISSIONID).then(resp => {
-        console.log(resp.data.data);
+        Indicator.close();
+        this.childList = resp.data.data;
       });
     },
     addNewApply() {
@@ -49,11 +61,55 @@ export default {
         path: "/addChild"
       });
     },
+    goToDetail(item) {
+      this.$router.push({
+        path: "/addChild",
+        query: {
+          id: item.id
+        }
+      });
+    },
+    deleteItem(item) {
+      if (item.forecastCode) {
+        Notify({ type: "danger", message: "提交后的子女信息不可删除" });
+        return;
+      }
+      let vm = this;
+      Dialog.confirm({
+        title: "删除",
+        message: "确认删除该子女信息"
+      })
+        .then(() => {
+          http
+            .delete(api.DELETESTUDENTBYID, {
+              studentID: item.id
+            })
+            .then(resp => {
+              if (resp.data.success) {
+                Notify({
+                  type: "success",
+                  message: "保存成功"
+                });
+                vm.isReloadList = false;
+                vm.getStudentByAdmissionID();
+                vm.isReloadList = true;
+              } else {
+                Notify({ type: "warning", message: resp.data.message });
+              }
+            });
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
     goBack() {
       this.$router.push({
         path: "/login"
       });
     }
+  },
+  components: {
+    LeftSlider
   }
 };
 </script>

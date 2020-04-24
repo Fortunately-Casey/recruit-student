@@ -6,25 +6,48 @@
         {{ step === 1 ? "首页" : "上一步" }}
         <div class="back-icon"></div>
       </div>
-      <div class="save">保存</div>
+      <div class="save" @click="save" v-if="!isDisabled">保存</div>
     </div>
     <div class="step1" v-show="step === 1">
       <div class="info-box">
         <div class="item">
           <div class="name space">姓名</div>
           <div class="value">
-            <input type="text" v-model="userName" @blur="blur" maxlength="15" />
+            <input
+              type="text"
+              v-model="name"
+              @blur="blur"
+              maxlength="15"
+              :disabled="isDisabled"
+            />
           </div>
         </div>
         <div class="item">
           <div class="name">身份证号</div>
           <div class="value">
-            <input type="text" v-model="idCard" @blur="blur" />
+            <input
+              type="text"
+              v-model="idCard"
+              @blur="blur"
+              :disabled="isDisabled"
+            />
+          </div>
+        </div>
+        <div class="item">
+          <div class="name space">性别</div>
+          <div class="value">
+            <van-dropdown-menu :style="'width:100px;height:40px;float:right'">
+              <van-dropdown-item
+                v-model="sex"
+                :options="sexOption"
+                :disabled="isDisabled"
+              />
+            </van-dropdown-menu>
           </div>
         </div>
         <div class="item">
           <div class="name">出生日期</div>
-          <div class="value" @click="isShowBirthday = true">
+          <div class="value" @click="showBirthday">
             <span>{{ todate(birthday) }}</span>
           </div>
         </div>
@@ -42,27 +65,45 @@
             <div class="item-name">{{ domicileAddress.city }}</div>
             <div class="item-name">{{ domicileAddress.town }}</div>
           </div>
-          <input type="text" placeholder="详细地址：道路、门牌号、楼栋号、单元号" @blur="blur" />
+          <input
+            type="text"
+            placeholder="详细地址：道路、门牌号、楼栋号、单元号"
+            @blur="blur"
+            v-model="detailAddress"
+            :disabled="isDisabled"
+          />
         </div>
       </div>
       <div class="live-info">
         <div class="item">
           <div class="name">现居住小区</div>
           <div class="value" @click="selectHouse">
-            <div class="icon" v-if="chosedHouseEstate ? false : true"></div>
-            <span v-else>{{ chosedHouseEstate }}</span>
+            <div class="icon" v-if="smallCommunityName ? false : true"></div>
+            <span v-else>{{ smallCommunityName }}</span>
           </div>
         </div>
         <div class="item">
           <div class="name">预报名学校</div>
-          <div class="value"></div>
+          <div class="value">{{ registrationSchool.schoolName }}</div>
         </div>
       </div>
-      <div class="old-school">
+      <div class="old-school" v-if="registrationSchool.label">
         <div class="item">
-          <div class="name">幼儿园名称</div>
+          <div class="name">
+            {{ registrationSchool.label === 1 ? "幼儿园名称" : "小学名称" }}
+          </div>
           <div class="value">
-            <input type="text" placeholder="请填写幼儿园名称" @blur="blur" />
+            <input
+              type="text"
+              v-model="lastSchoolName"
+              :disabled="isDisabled"
+              :placeholder="
+                registrationSchool.label === 1
+                  ? '请填写幼儿园名称'
+                  : '请填写小学名称'
+              "
+              @blur="blur"
+            />
           </div>
         </div>
       </div>
@@ -72,31 +113,57 @@
         <div class="item">
           <div class="name">姓名</div>
           <div class="value">
-            <input type="text" @blur="blur" />
+            <input
+              type="text"
+              @blur="blur"
+              v-model="parents[0].name"
+              :disabled="isDisabled"
+            />
           </div>
         </div>
         <div class="item">
           <div class="name">关系</div>
           <div class="value">
-            <div class="icon"></div>
+            <van-dropdown-menu :style="'width:100px;height:40px;float:right'">
+              <van-dropdown-item
+                v-model="parents[0].relation"
+                :options="parentOption"
+                :disabled="isDisabled"
+              />
+            </van-dropdown-menu>
           </div>
         </div>
         <div class="item">
           <div class="name">身份证号</div>
           <div class="value">
-            <input type="text" @blur="blur" />
+            <input
+              type="text"
+              v-model="parents[0].idCard"
+              @blur="blur"
+              :disabled="isDisabled"
+            />
           </div>
         </div>
         <div class="item">
           <div class="name">联系电话</div>
           <div class="value">
-            <input type="number" @blur="blur" />
+            <input
+              type="number"
+              v-model="parents[0].linkPhone"
+              @blur="blur"
+              :disabled="isDisabled"
+            />
           </div>
         </div>
         <div class="item">
           <div class="name">工作单位</div>
           <div class="value">
-            <input type="text" @blur="blur" />
+            <input
+              type="text"
+              v-model="parents[0].workAddress"
+              @blur="blur"
+              :disabled="isDisabled"
+            />
           </div>
         </div>
       </div>
@@ -104,31 +171,58 @@
         <div class="item">
           <div class="name">姓名</div>
           <div class="value">
-            <input type="text" maxlength="10" @blur="blur" />
+            <input
+              type="text"
+              maxlength="10"
+              v-model="parents[1].name"
+              @blur="blur"
+              :disabled="isDisabled"
+            />
           </div>
         </div>
         <div class="item">
           <div class="name">关系</div>
           <div class="value">
-            <div class="icon"></div>
+            <van-dropdown-menu :style="'width:100px;height:40px;float:right'">
+              <van-dropdown-item
+                :disabled="isDisabled"
+                v-model="parents[1].relation"
+                :options="parentOption"
+              />
+            </van-dropdown-menu>
           </div>
         </div>
         <div class="item">
           <div class="name">身份证号</div>
           <div class="value">
-            <input type="text" @blur="blur" />
+            <input
+              type="text"
+              @blur="blur"
+              v-model="parents[1].idCard"
+              :disabled="isDisabled"
+            />
           </div>
         </div>
         <div class="item">
           <div class="name">联系电话</div>
           <div class="value">
-            <input type="number" @blur="blur" />
+            <input
+              type="number"
+              @blur="blur"
+              v-model="parents[1].linkPhone"
+              :disabled="isDisabled"
+            />
           </div>
         </div>
         <div class="item">
           <div class="name">工作单位</div>
           <div class="value">
-            <input type="text" @blur="blur" />
+            <input
+              type="text"
+              @blur="blur"
+              v-model="parents[1].workAddress"
+              :disabled="isDisabled"
+            />
           </div>
         </div>
       </div>
@@ -146,30 +240,79 @@
           <div class="active" v-if="chosedHouseIndex === index"></div>
         </div>
       </div>
-      <div class="house-property">
+      <div class="house-property" v-if="chosedHouseIndex === 0">
         <div class="item">
           <div class="name">房产性质</div>
           <div class="value">
-            <div class="icon"></div>
+            <van-dropdown-menu :style="'width:100px;height:40px;float:right'">
+              <van-dropdown-item
+                v-model="houseNature"
+                :disabled="isDisabled"
+                :options="propertyoption"
+              />
+            </van-dropdown-menu>
           </div>
         </div>
         <div class="item">
           <div class="name">房产所有人</div>
           <div class="value">
-            <input type="text" @blur="blur" />
+            <input
+              type="text"
+              @blur="blur"
+              v-model="houseOwner"
+              :disabled="isDisabled"
+            />
           </div>
         </div>
         <div class="item">
           <div class="name">取得/购买时间</div>
-          <div class="value" @click="choseGetHouseTime">{{ todate(getHouseTime) }}</div>
+          <div class="value" @click="choseGetHouseTime">
+            {{ todate(buyDate) }}
+          </div>
         </div>
       </div>
-      <div class="house-number">
+      <div class="house-property" v-if="chosedHouseIndex === 1">
+        <div class="item">
+          <div class="name">居住证有效期</div>
+          <div class="value">
+            <div class="value" @click="showResidence">
+              {{ todate(permitResidencePeriod) }}
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="name">劳务合同期限</div>
+          <div class="value">
+            <div class="value" @click="showLaborContractPeriod">
+              {{ todate(laborContractPeriod) }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="house-number" v-if="chosedHouseIndex === 0">
         <div class="item">
           <div class="name">房产登记号/房产发票号</div>
         </div>
         <div class="item">
-          <input type="text" @blur="blur" />
+          <input
+            type="text"
+            @blur="blur"
+            v-model="houseNumbers"
+            :disabled="isDisabled"
+          />
+        </div>
+      </div>
+      <div class="house-number" v-if="chosedHouseIndex === 1">
+        <div class="item">
+          <div class="name">养老保险单位所在地</div>
+        </div>
+        <div class="item">
+          <input
+            type="text"
+            @blur="blur"
+            v-model="pensionUnitsAddress"
+            :disabled="isDisabled"
+          />
         </div>
       </div>
     </div>
@@ -183,50 +326,67 @@
           @click="choseSpecial(index)"
         >
           {{ item.name }}
-          <div class="active" v-if="chosedSpecialIndex === index"></div>
+          <div class="active" v-if="specialCondition === index"></div>
         </div>
       </div>
       <div class="other-info">
         <div class="item">
           <div class="name">其他备注</div>
         </div>
-        <textarea placeholder="填写备注信息"></textarea>
+        <textarea
+          placeholder="填写备注信息"
+          v-model="otherRemark"
+          :disabled="isDisabled"
+        ></textarea>
       </div>
-      <div class="commitment" style="margin-bottom:0">
+      <div class="commitment" style="margin-bottom:0" v-if="!isDisabled">
         <div class="item">
           <div class="name">报名承诺书</div>
         </div>
-        <div class="commit-text">本人承诺：如有弄虚作假，提供虚假材料的，一经发现，对其已入学子女作退学或转学处理，由此产生的不良影响，本人愿意承担一切后果</div>
+        <div class="commit-text">
+          本人承诺：如有弄虚作假，提供虚假材料的，一经发现，对其已入学子女作退学或转学处理，由此产生的不良影响，本人愿意承担一切后果
+        </div>
       </div>
-      <div class="accept" :class="accept ? 'chosed' : ''">
-        <van-checkbox v-model="accept" shape="square">我已阅读并接受</van-checkbox>
+      <div class="accept" :class="accept ? 'chosed' : ''" v-if="!isDisabled">
+        <van-checkbox v-model="accept" shape="square"
+          >我已阅读并接受</van-checkbox
+        >
       </div>
       <div
         class="commit-button"
         :class="accept ? 'enable' : 'disable'"
-        v-if="step === 4"
+        v-if="!isDisabled && step === 4"
         @click="confirm"
-      >提交（{{ step }}/4）</div>
+      >
+        提交（{{ step }}/4）
+      </div>
       <van-popup v-model="isShowAffirm" round closeable>
         <div class="commit-affirm">
           <div class="text">
             预报名申请提交后信息
-            <span style="color:#ff3636">不可修改</span>，请仔核对填报信息后提交！
+            <span style="color:#ff3636">不可修改</span
+            >，请仔核对填报信息后提交！
           </div>
           <div class="buttons">
             <div class="canncel" @click="isShowAffirm = false">再想想</div>
-            <div class="confirm">确认</div>
+            <div class="confirm" @click="comfirmCommit">确认</div>
           </div>
         </div>
       </van-popup>
     </div>
-    <div class="step-button" v-if="step !== 4" @click="nextStep">下一步（{{ step }}/4）</div>
+    <div class="step-button" v-if="step !== 4" @click="nextStep">
+      下一步（{{ step }}/4）
+    </div>
     <address-matching
       :isShow="isShowAddress"
       @choseAddress="choseAddress"
       @closeAddress="closeAddress"
     ></address-matching>
-    <house-estate :isShow="isShowHouse" @choseHouse="choseHouse" @closeHouse="closeHouse"></house-estate>
+    <house-estate
+      :isShow="isShowHouse"
+      @choseHouse="choseHouse"
+      @closeHouse="closeHouse"
+    ></house-estate>
     <div class="date-time" v-if="isShowPurchaseDate">
       <van-datetime-picker
         v-model="purchaseDate"
@@ -247,11 +407,32 @@
         @cancel="canncelBirthday"
       />
     </div>
+    <div class="date-time" v-if="isShowResidence">
+      <van-datetime-picker
+        v-model="selectResidence"
+        type="date"
+        :min-date="minDate"
+        :max-date="maxDate"
+        @confirm="confirmResidence"
+        @cancel="canncelResidence"
+      />
+    </div>
+    <div class="date-time" v-if="isShowLaborContract">
+      <van-datetime-picker
+        v-model="selectLaborContract"
+        type="date"
+        :min-date="minDate"
+        :max-date="maxDate"
+        @confirm="confirmLaborContract"
+        @cancel="canncelLaborContract"
+      />
+    </div>
   </div>
 </template>
 <script>
 import { blur, Todate } from "@/common/tool/tool";
-import { Notify } from "vant";
+import { Notify, Dialog } from "vant";
+import { Indicator } from "mint-ui";
 import AddressMatching from "@/components/AddressMatching.vue";
 import HouseEstate from "@/components/HouseEstate.vue";
 import * as api from "@/service/apiList";
@@ -259,11 +440,55 @@ import http from "@/service/service";
 export default {
   data() {
     return {
+      ID: "",
+      isDisabled: false,
       isShowAddress: false,
       isShowHouse: false,
       isShowBirthday: false,
-      userName: "",
+      name: "",
       idCard: "",
+      sex: 1,
+      birthday: "",
+      domicileAddress: {
+        province: "",
+        city: "",
+        town: "",
+        provinceID: 0,
+        cityID: 0,
+        areaID: 0
+      },
+      detailAddress: "",
+      smallCommunityName: "",
+      smallCommunityID: 0,
+      registrationSchool: {
+        schoolName: "",
+        schoolID: 0
+      },
+      lastSchoolName: "",
+      parents: [
+        {
+          sort: 1,
+          idCard: "",
+          linkPhone: "",
+          name: "",
+          relation: 1,
+          workAddress: ""
+        },
+        {
+          sort: 2,
+          idCard: "",
+          linkPhone: "",
+          name: "",
+          relation: 1,
+          workAddress: ""
+        }
+      ],
+      chosedHouseIndex: 0,
+      houseNature: 1,
+      houseOwner: "",
+      houseNumbers: "",
+      pensionUnitsAddress: "",
+      otherRemark: "",
       step: 1,
       hasHouse: [
         {
@@ -296,27 +521,148 @@ export default {
           name: "无"
         }
       ],
-      domicileAddress: {},
       accept: false,
-      chosedSpecialIndex: 0,
-      chosedHouseIndex: 0,
-      getHouseTime: new Date(),
+      specialCondition: 0,
+      buyDate: new Date(),
       purchaseDate: new Date(),
       selectBirthday: new Date(),
-      birthday: new Date(),
       minDate: new Date(2000, 0, 1),
       maxDate: new Date(),
       isShowAffirm: false,
       isShowPurchaseDate: false,
-      chosedHouseEstate: ""
+      sexOption: [
+        {
+          text: "男",
+          value: 1
+        },
+        {
+          text: "女",
+          value: 2
+        }
+      ],
+      propertyoption: [
+        {
+          text: "父母房产",
+          value: 1
+        },
+        {
+          text: "祖父母房产",
+          value: 2
+        },
+        {
+          text: "期房",
+          value: 3
+        }
+      ],
+      parentOption: [
+        {
+          text: "父亲",
+          value: 1
+        },
+        {
+          text: "母亲",
+          value: 2
+        },
+        {
+          text: "爷爷",
+          value: 3
+        },
+        {
+          text: "奶奶",
+          value: 4
+        },
+        {
+          text: "外公",
+          value: 5
+        },
+        {
+          text: "外婆",
+          value: 6
+        },
+        {
+          text: "其他监护人",
+          value: 7
+        }
+      ],
+      permitResidencePeriod: new Date(),
+      laborContractPeriod: new Date(),
+      selectResidence: new Date(),
+      selectLaborContract: new Date(),
+      isShowResidence: false,
+      isShowLaborContract: false
     };
   },
+  mounted() {
+    this.$nextTick(function() {
+      // console.log(this.$route.query.id)
+      if (this.$route.query.id) {
+        this.getStudentDetail(this.$route.query.id);
+      }
+    });
+  },
   methods: {
+    getStudentDetail(id) {
+      let vm = this;
+      http
+        .get(api.GETSTUDENTDETAIL, {
+          ID: id
+        })
+        .then(resp => {
+          let res = resp.data.data;
+          if (res.forecastCode) {
+            vm.isDisabled = true;
+          } else {
+            vm.isDisabled = false;
+          }
+          vm.ID = res.id;
+          vm.name = res.name;
+          vm.sex = res.sex;
+          vm.idCard = res.idCard;
+          vm.birthday = new Date(res.birthday);
+          vm.domicileAddress.provinceID = res.provinceID;
+          vm.domicileAddress.cityID = res.cityID;
+          vm.domicileAddress.areaID = res.areaID;
+          vm.domicileAddress.city = res.cityName;
+          vm.domicileAddress.province = res.provincesName;
+          vm.domicileAddress.town = res.areaName;
+          vm.detailAddress = res.detailAddress;
+          vm.smallCommunityName = res.smallCommunityName;
+          vm.smallCommunityID = res.smallCommunityID;
+          vm.registrationSchool.schoolName = res.schoolName;
+          vm.registrationSchool.schoolID = res.schoolID;
+          vm.lastSchoolName = res.preSchoolInformation
+            ? res.preSchoolInformation
+            : res.primarySchoolName;
+          if (res.preSchoolInformation) {
+            vm.registrationSchool.label = 1;
+          } else if (res.primarySchoolName) {
+            vm.registrationSchool.label = 2;
+          }
+          vm.parents = res.parents;
+          vm.chosedHouseIndex = res.property ? 0 : 1;
+          vm.houseNature = res.houseNature;
+          vm.houseOwner = res.houseOwner;
+          vm.buyDate = res.buyDate ? new Date(res.buyDate) : new Date();
+          vm.houseNumbers = res.houseNumbers;
+          vm.permitResidencePeriod = res.permitResidencePeriod
+            ? new Date(res.permitResidencePeriod)
+            : new Date();
+          vm.laborContractPeriod = res.laborContractPeriod
+            ? new Date(res.laborContractPeriod)
+            : new Date();
+          vm.pensionUnitsAddress = res.pensionUnitsAddress;
+          vm.specialCondition = res.specialCondition - 1;
+          vm.otherRemark = res.otherRemark;
+        });
+    },
     choseGetHouseTime() {
+      if (this.isDisabled) {
+        return;
+      }
       this.isShowPurchaseDate = true;
     },
     confirmPurchaseDate(date) {
-      this.getHouseTime = this.todate(date);
+      this.buyDate = this.todate(date);
       this.isShowPurchaseDate = false;
     },
     canncelPurchaseDate() {
@@ -329,20 +675,44 @@ export default {
     canncelBirthday() {
       this.isShowBirthday = false;
     },
+    confirmResidence(date) {
+      this.permitResidencePeriod = this.todate(date);
+      this.isShowResidence = false;
+    },
+    canncelResidence() {
+      this.isShowResidence = false;
+    },
+    confirmLaborContract(date) {
+      this.laborContractPeriod = this.todate(date);
+      this.isShowLaborContract = false;
+    },
+    canncelLaborContract() {
+      this.isShowLaborContract = false;
+    },
     choseAddress(address) {
       this.isShowAddress = address.isShow;
       this.domicileAddress = address.chosedValue;
     },
     choseHouse(house) {
       this.isShowHouse = house.isShow;
-      this.chosedHouseEstate = house.chosedValue.houseEstate;
-      console.log(house);
+      this.smallCommunityName = house.chosedValue.houseEstate;
+      this.smallCommunityID = house.chosedValue.id;
       let params = {
-        smallCommunityID: house.chosedValue.id,
+        smallCommunityID: this.smallCommunityID,
         birthday: this.todate(this.birthday)
       };
+      Indicator.open();
       http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params).then(resp => {
-        console.log(resp.data.data);
+        if (resp.data.data) {
+          this.registrationSchool = resp.data.data;
+        } else {
+          Notify({ type: "warning", message: "未匹配到预报名学校！" });
+          this.registrationSchool = {
+            schoolName: "",
+            label: ""
+          };
+        }
+        Indicator.close();
       });
     },
     closeAddress() {
@@ -352,13 +722,37 @@ export default {
       this.isShowHouse = false;
     },
     selectHouse() {
+      if (this.isDisabled) {
+        return;
+      }
       if (!this.birthday) {
         Notify({ type: "warning", message: "请选择生日后进行学校匹配" });
         return;
       }
       this.isShowHouse = true;
     },
+    showBirthday() {
+      if (this.isDisabled) {
+        return;
+      }
+      this.isShowBirthday = true;
+    },
+    showLaborContractPeriod() {
+      if (this.isDisabled) {
+        return;
+      }
+      this.isShowLaborContract = true;
+    },
+    showResidence() {
+      if (this.isDisabled) {
+        return;
+      }
+      this.isShowResidence = true;
+    },
     selectAddress() {
+      if (this.isDisabled) {
+        return;
+      }
       this.isShowAddress = true;
     },
     topStep() {
@@ -375,14 +769,25 @@ export default {
     },
     // 选择是否有房产
     choseHasHouse(index) {
+      if (this.isDisabled) {
+        return;
+      }
       this.chosedHouseIndex = index;
     },
     // 选择特殊情况
     choseSpecial(index) {
-      this.chosedSpecialIndex = index;
+      if (this.isDisabled) {
+        return;
+      }
+      this.specialCondition = index;
     },
     // 提交
     confirm() {
+      let vm = this;
+      if (!vm.otherRemark) {
+        Notify({ type: "warning", message: "请填写其他备注信息!" });
+        return;
+      }
       if (!this.accept) {
         Notify({ type: "warning", message: "请阅读并勾选承诺书!" });
         return;
@@ -391,10 +796,126 @@ export default {
     },
     // 下一步
     nextStep() {
-      this.step++;
+      let vm = this;
+      if (this.step === 1) {
+        if (
+          !vm.name ||
+          !vm.idCard ||
+          !vm.sex ||
+          !vm.birthday ||
+          !vm.domicileAddress.province ||
+          !vm.detailAddress ||
+          !vm.smallCommunityName ||
+          !vm.registrationSchool.schoolName ||
+          !vm.lastSchoolName
+        ) {
+          Notify({ type: "warning", message: "请填写完整信息再点击下一步!" });
+        } else {
+          this.step++;
+        }
+      } else if (this.step === 2) {
+        if (
+          !vm.parents[0].idCard ||
+          !vm.parents[0].linkPhone ||
+          !vm.parents[0].name ||
+          !vm.parents[0].workAddress
+        ) {
+          Notify({
+            type: "warning",
+            message: "请填写完整家人信息再点击下一步!"
+          });
+        } else {
+          this.step++;
+        }
+      } else if (this.step === 3) {
+        if (vm.chosedHouseIndex === 0) {
+          if (!vm.houseOwner || !vm.houseNumbers) {
+            Notify({ type: "warning", message: "请填写完整信息再点击下一步!" });
+          } else {
+            this.step++;
+          }
+        } else {
+          if (!vm.pensionUnitsAddress) {
+            Notify({ type: "warning", message: "请填写完整信息再点击下一步!" });
+          } else {
+            this.step++;
+          }
+        }
+      }
     },
     blur() {
       blur();
+    },
+    save() {
+      let vm = this;
+      Dialog.confirm({
+        title: "保存",
+        message: "确认要保存改学生信息吗？"
+      })
+        .then(() => {
+          vm.saveConfirm(false);
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+    comfirmCommit() {
+      this.saveConfirm(true);
+    },
+    saveConfirm(commit) {
+      let vm = this;
+      let params = {
+        id: vm.ID,
+        name: vm.name,
+        idCard: vm.idCard,
+        sex: vm.sex,
+        birthday: vm.todate(vm.birthday),
+        provinceID: vm.domicileAddress.provinceID,
+        provincesName: vm.domicileAddress.province,
+        cityID: vm.domicileAddress.cityID,
+        cityName: vm.domicileAddress.city,
+        areaID: vm.domicileAddress.areaID,
+        areaName: vm.domicileAddress.town,
+        detailAddress: vm.detailAddress,
+        smallCommunityName: vm.smallCommunityName,
+        smallCommunityID: vm.smallCommunityID,
+        schoolID: vm.registrationSchool.schoolID,
+        schoolName: vm.registrationSchool.schoolName,
+        preSchoolInformation:
+          vm.registrationSchool.label === 1 ? vm.lastSchoolName : "",
+        primarySchoolName:
+          vm.registrationSchool.label === 2 ? vm.lastSchoolName : "",
+        parents: vm.parents,
+        property: vm.chosedHouseIndex === 0 ? true : false,
+        houseNature: vm.chosedHouseIndex === 0 ? vm.houseNature : "",
+        houseOwner: vm.chosedHouseIndex === 0 ? vm.houseOwner : "",
+        buyDate: vm.chosedHouseIndex === 0 ? vm.todate(vm.buyDate) : "",
+        houseNumbers: vm.chosedHouseIndex === 0 ? vm.houseNumbers : "",
+        permitResidencePeriod:
+          vm.chosedHouseIndex === 1 ? vm.todate(vm.permitResidencePeriod) : "",
+        laborContractPeriod:
+          vm.chosedHouseIndex === 1 ? vm.todate(vm.laborContractPeriod) : "",
+        pensionUnitsAddress:
+          vm.chosedHouseIndex === 1 ? vm.pensionUnitsAddress : "",
+        specialCondition: vm.specialCondition + 1,
+        otherRemark: vm.otherRemark,
+        operateCommit: commit,
+        auditStatus: 0
+      };
+      console.log(JSON.stringify(params));
+      http.post(api.SAVEANDCOMMIT, params).then(resp => {
+        if (resp.data.success) {
+          Notify({
+            type: "success",
+            message: commit ? "提交成功" : "保存成功"
+          });
+          vm.$router.push({
+            path: "/index"
+          });
+        } else {
+          Notify({ type: "danger", message: resp.data.message });
+        }
+      });
     }
   },
   components: {
