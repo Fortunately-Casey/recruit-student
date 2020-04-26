@@ -85,7 +85,7 @@ export default {
   created() {},
   mounted() {
     var vm = this;
-    //获取南通区县
+    //获取省
     vm.loading = true;
     http.get(api.GETPROVINCEAREA).then(resp => {
       vm.loading = false;
@@ -98,7 +98,7 @@ export default {
         isShow: false
       });
     },
-    // 选择南通区县
+    // 获取市
     choseProvince(item) {
       var vm = this;
       vm.loading = true;

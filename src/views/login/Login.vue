@@ -87,6 +87,16 @@ export default {
       userPW: ""
     };
   },
+  created() {
+    let username = window.localStorage.getItem("username");
+    let password = window.localStorage.getItem("password");
+    if (username) {
+      this.username = username;
+    }
+    if (password) {
+      this.userPW = password;
+    }
+  },
   mounted() {
     this.bodyHeight = document.documentElement.clientHeight;
   },
@@ -106,6 +116,8 @@ export default {
         if (resp.data.success) {
           Notify({ type: "success", message: "登录成功" });
           window.localStorage.setItem("token", resp.data.data.token);
+          window.localStorage.setItem("username", vm.username);
+          window.localStorage.setItem("password", vm.userPW);
           this.$router.push({
             path: "/index"
           });

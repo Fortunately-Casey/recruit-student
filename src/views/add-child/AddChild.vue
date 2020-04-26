@@ -86,6 +86,19 @@
           <div class="name">预报名学校</div>
           <div class="value">{{ registrationSchool.schoolName }}</div>
         </div>
+        <div class="item" v-if="isShowAlternativeSchool">
+          <div class="name">备选学校</div>
+          <div class="value">
+            <van-dropdown-menu :style="'width:100px;height:40px;float:right'">
+              <van-dropdown-item
+                v-model="alternativeSchoolID"
+                :options="alternativeOption"
+                :disabled="isDisabled"
+                @change="alternativeChange"
+              />
+            </van-dropdown-menu>
+          </div>
+        </div>
       </div>
       <div class="old-school" v-if="registrationSchool.label">
         <div class="item">
@@ -457,6 +470,9 @@ export default {
         cityID: 0,
         areaID: 0
       },
+      alternativeSchoolID: "",
+      alternativeSchoolName: "",
+      alternativeOption: [],
       detailAddress: "",
       smallCommunityName: "",
       smallCommunityID: 0,
@@ -589,18 +605,42 @@ export default {
       selectResidence: new Date(),
       selectLaborContract: new Date(),
       isShowResidence: false,
-      isShowLaborContract: false
+      isShowLaborContract: false,
+      isShowAlternativeSchool: false
     };
   },
   mounted() {
     this.$nextTick(function() {
-      // console.log(this.$route.query.id)
+      this.getSchoolList();
       if (this.$route.query.id) {
         this.getStudentDetail(this.$route.query.id);
       }
     });
   },
   methods: {
+    // 获取备选学校
+    getSchoolList() {
+      let vm = this;
+      http.get(api.GETSCHOOLLIST).then(resp => {
+        let schoolList = [];
+        resp.data.data.map(v => {
+          schoolList.push({
+            text: v.schoolName,
+            value: v.schoolID
+          });
+        });
+        vm.alternativeSchoolID = schoolList[0].value;
+        vm.alternativeSchoolName = schoolList[0].text;
+        vm.alternativeOption = schoolList;
+      });
+    },
+    alternativeChange(id) {
+      let vm = this;
+      let select = vm.alternativeOption.filter(v => {
+        return v.value == id;
+      });
+      this.alternativeSchoolName = select[0].text;
+    },
     getStudentDetail(id) {
       let vm = this;
       http
@@ -653,6 +693,11 @@ export default {
           vm.pensionUnitsAddress = res.pensionUnitsAddress;
           vm.specialCondition = res.specialCondition - 1;
           vm.otherRemark = res.otherRemark;
+          vm.alternativeSchoolID = res.alternativeSchoolID;
+          vm.alternativeSchoolName = res.alternativeSchoolName;
+          if (res.alternativeSchoolID) {
+            vm.isShowAlternativeSchool = true;
+          }
         });
     },
     choseGetHouseTime() {
@@ -705,6 +750,11 @@ export default {
       http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params).then(resp => {
         if (resp.data.data) {
           this.registrationSchool = resp.data.data;
+          if (resp.data.data.schoolName == "实验小学") {
+            this.isShowAlternativeSchool = true;
+          } else {
+            this.isShowAlternativeSchool = false;
+          }
         } else {
           Notify({ type: "warning", message: "未匹配到预报名学校！" });
           this.registrationSchool = {
@@ -900,7 +950,15 @@ export default {
         specialCondition: vm.specialCondition + 1,
         otherRemark: vm.otherRemark,
         operateCommit: commit,
-        auditStatus: 0
+        auditStatus: 0,
+        alternativeSchoolID:
+          vm.registrationSchool.schoolName == "实验小学"
+            ? vm.alternativeSchoolID
+            : "",
+        alternativeSchoolName:
+          vm.registrationSchool.schoolName == "实验小学"
+            ? vm.alternativeSchoolName
+            : ""
       };
       console.log(JSON.stringify(params));
       http.post(api.SAVEANDCOMMIT, params).then(resp => {

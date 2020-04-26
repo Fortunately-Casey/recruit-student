@@ -9,15 +9,23 @@
       <!-- <span class="qrcode" @click="isShowQrcode = true">打卡二维码</span> -->
     </div>
     <div class="children-list" v-if="isReloadList">
-      <div v-for="(item, index) in childList" :key="index" @click="goToDetail(item)">
-        <left-slider :index="index" @deleteItem="deleteItem(item)" :ref="item.rowNumber">
+      <div
+        v-for="(item, index) in childList"
+        :key="index"
+        @click="goToDetail(item)"
+      >
+        <left-slider
+          :index="index"
+          @deleteItem="deleteItem(item)"
+          :ref="item.rowNumber"
+        >
           <div class="item">
             <div class="number">
               <div class="name">预报名码</div>
               <div class="number-code">{{ item.forecastCode }}</div>
             </div>
             <div class="info">
-              <div class="info-logo">
+              <div :class="item.forecastCode ? 'info-logo1' : 'info-logo2'">
                 <div class="logo"></div>
               </div>
               <div class="values">
@@ -88,7 +96,7 @@ export default {
               if (resp.data.success) {
                 Notify({
                   type: "success",
-                  message: "保存成功"
+                  message: "删除成功"
                 });
                 vm.isReloadList = false;
                 vm.getStudentByAdmissionID();
@@ -185,7 +193,7 @@ export default {
       .info {
         height: 65px;
         display: flex;
-        .info-logo {
+        .info-logo1 {
           width: 80px;
           display: flex;
           justify-content: center;
@@ -194,6 +202,18 @@ export default {
             width: 52px;
             height: 40px;
             background: url("../../assets/image/apply-logo.png") no-repeat;
+            background-size: 100% 100%;
+          }
+        }
+        .info-logo2 {
+          width: 80px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .logo {
+            width: 52px;
+            height: 40px;
+            background: url("../../assets/image/apply-logo2.png") no-repeat;
             background-size: 100% 100%;
           }
         }

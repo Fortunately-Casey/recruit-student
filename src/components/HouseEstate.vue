@@ -88,7 +88,7 @@ export default {
   created() {},
   mounted() {
     var vm = this;
-    //获取南通区县
+    //获取街道
     vm.loading = true;
     http.get(api.GETSTREETLIST).then(resp => {
       vm.loading = false;
@@ -101,7 +101,7 @@ export default {
         isShow: false
       });
     },
-    // 选择南通区县
+    // 选择区
     choseStreet(item) {
       var vm = this;
       vm.loading = true;
@@ -133,6 +133,7 @@ export default {
       this.selectAddress.chosedCity = "";
       this.selectAddress.chosedTown = "";
     },
+    // 获取小区
     choseCity(item) {
       let vm = this;
       vm.isShowStreetList = false;
