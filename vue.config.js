@@ -26,7 +26,7 @@ module.exports = {
       "/api": {
         /* 目标代理服务器地址 */
         // target: "https://yqfk.ntkfqjy.com:20000",
-        target: "http://wx.ntschy.com:10058",
+        target: "http://223.113.1.77:10058",
         pathRewrite: {
           "^/api": "/"
         },
