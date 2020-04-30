@@ -454,6 +454,7 @@ export default {
   data() {
     return {
       ID: "",
+      isDisableHasHouse: false,
       isDisabled: false,
       isShowAddress: false,
       isShowHouse: false,
@@ -475,7 +476,7 @@ export default {
       alternativeOption: [],
       detailAddress: "",
       smallCommunityName: "",
-      smallCommunityID: 0,
+      smallCommunityID: "",
       registrationSchool: {
         schoolName: "",
         schoolID: 0
@@ -695,8 +696,14 @@ export default {
           vm.otherRemark = res.otherRemark;
           vm.alternativeSchoolID = res.alternativeSchoolID;
           vm.alternativeSchoolName = res.alternativeSchoolName;
-          if (res.alternativeSchoolID) {
-            vm.isShowAlternativeSchool = true;
+          if (res.schoolID == 4 || res.schoolID == 1) {
+            this.isDisableHasHouse = true;
+            this.chosedHouseIndex = 0;
+            this.isShowAlternativeSchool = true;
+          } else {
+            this.isDisableHasHouse = false;
+            this.chosedHouseIndex = 1;
+            this.isShowAlternativeSchool = false;
           }
         });
     },
@@ -750,9 +757,16 @@ export default {
       http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params).then(resp => {
         if (resp.data.data) {
           this.registrationSchool = resp.data.data;
-          if (resp.data.data.schoolName == "实验小学") {
+          if (
+            this.registrationSchool.schoolID == 4 ||
+            this.registrationSchool.schoolID == 1
+          ) {
+            this.isDisableHasHouse = true;
+            this.chosedHouseIndex = 0;
             this.isShowAlternativeSchool = true;
           } else {
+            this.isDisableHasHouse = false;
+            this.chosedHouseIndex = 1;
             this.isShowAlternativeSchool = false;
           }
         } else {
@@ -819,7 +833,7 @@ export default {
     },
     // 选择是否有房产
     choseHasHouse(index) {
-      if (this.isDisabled) {
+      if (this.isDisabled || this.isDisableHasHouse) {
         return;
       }
       this.chosedHouseIndex = index;
@@ -1362,13 +1376,15 @@ export default {
     height: 40px;
     background-color: #64b3ed;
     border-radius: 20px;
-    position: absolute;
-    left: 50%;
-    bottom: 10px;
-    transform: translateX(-50%);
+    // position: absolute;
+    // left: 50%;
+    // bottom: 10px;
+    // transform: translateX(-50%);
+    margin: 0 auto;
     line-height: 40px;
     text-align: center;
     color: #fff;
+    margin-bottom: 10px;
   }
   .date-time {
     width: 100%;
