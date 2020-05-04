@@ -1,7 +1,10 @@
 <template>
-  <div id="add-child">
+  <div
+    id="add-child"
+    :style="{ height: bodyHeight ? bodyHeight + 'px' : '100%' }"
+  >
     <div class="header">
-      学生信息
+      {{ returnHeaderInfo() }}
       <div class="back" @click="topStep">
         {{ step === 1 ? "首页" : "上一步" }}
         <div class="back-icon"></div>
@@ -89,7 +92,10 @@
         <div class="item" v-if="isShowAlternativeSchool">
           <div class="name">备选学校</div>
           <div class="value">
-            <van-dropdown-menu :style="'width:100px;height:40px;float:right'">
+            <van-dropdown-menu
+              direction="up"
+              :style="'width:100px;height:40px;float:right'"
+            >
               <van-dropdown-item
                 v-model="alternativeSchoolID"
                 :options="alternativeOption"
@@ -350,6 +356,7 @@
           placeholder="填写备注信息"
           v-model="otherRemark"
           :disabled="isDisabled"
+          maxlength="100"
         ></textarea>
       </div>
       <div class="commitment" style="margin-bottom:0" v-if="!isDisabled">
@@ -378,7 +385,7 @@
           <div class="text">
             预报名申请提交后信息
             <span style="color:#ff3636">不可修改</span
-            >，请仔核对填报信息后提交！
+            >，请仔细核对填报信息后提交！
           </div>
           <div class="buttons">
             <div class="canncel" @click="isShowAffirm = false">再想想</div>
@@ -496,7 +503,7 @@ export default {
           idCard: "",
           linkPhone: "",
           name: "",
-          relation: 1,
+          relation: 2,
           workAddress: ""
         }
       ],
@@ -543,8 +550,8 @@ export default {
       buyDate: new Date(),
       purchaseDate: new Date(),
       selectBirthday: new Date(),
-      minDate: new Date(2000, 0, 1),
-      maxDate: new Date(),
+      minDate: new Date(2000, 1, 1),
+      maxDate: new Date(2025, 1, 1),
       isShowAffirm: false,
       isShowPurchaseDate: false,
       sexOption: [
@@ -607,10 +614,12 @@ export default {
       selectLaborContract: new Date(),
       isShowResidence: false,
       isShowLaborContract: false,
-      isShowAlternativeSchool: false
+      isShowAlternativeSchool: false,
+      bodyHeight: ""
     };
   },
   mounted() {
+    this.bodyHeight = document.documentElement.clientHeight;
     this.$nextTick(function() {
       this.getSchoolList();
       if (this.$route.query.id) {
@@ -659,7 +668,7 @@ export default {
           vm.name = res.name;
           vm.sex = res.sex;
           vm.idCard = res.idCard;
-          vm.birthday = new Date(res.birthday);
+          vm.birthday = res.birthday ? new Date(res.birthday) : "";
           vm.domicileAddress.provinceID = res.provinceID;
           vm.domicileAddress.cityID = res.cityID;
           vm.domicileAddress.areaID = res.areaID;
@@ -694,8 +703,9 @@ export default {
           vm.pensionUnitsAddress = res.pensionUnitsAddress;
           vm.specialCondition = res.specialCondition - 1;
           vm.otherRemark = res.otherRemark;
-          vm.alternativeSchoolID = res.alternativeSchoolID;
+          vm.alternativeSchoolID = Number(res.alternativeSchoolID);
           vm.alternativeSchoolName = res.alternativeSchoolName;
+          // console.log(vm.alternativeSchoolID,vm.alternativeSchoolName)
           if (res.schoolID == 4 || res.schoolID == 1) {
             this.isDisableHasHouse = true;
             this.chosedHouseIndex = 0;
@@ -713,6 +723,17 @@ export default {
       }
       this.isShowPurchaseDate = true;
     },
+    returnHeaderInfo() {
+      if (this.step === 1) {
+        return "学生信息";
+      } else if (this.step === 2) {
+        return "家长信息";
+      } else if (this.step === 3) {
+        return "房产/居住信息";
+      } else {
+        return "其他信息";
+      }
+    },
     confirmPurchaseDate(date) {
       this.buyDate = this.todate(date);
       this.isShowPurchaseDate = false;
@@ -721,8 +742,41 @@ export default {
       this.isShowPurchaseDate = false;
     },
     confirmBirthday(date) {
+      let vm = this;
       this.birthday = this.todate(date);
       this.isShowBirthday = false;
+      if (!vm.smallCommunityName) {
+        return;
+      }
+      let params = {
+        smallCommunityID: this.smallCommunityID,
+        birthday: this.todate(this.birthday)
+      };
+      Indicator.open();
+      http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params).then(resp => {
+        if (resp.data.data) {
+          this.registrationSchool = resp.data.data;
+          if (
+            this.registrationSchool.schoolID == 4 ||
+            this.registrationSchool.schoolID == 1
+          ) {
+            this.isDisableHasHouse = true;
+            this.chosedHouseIndex = 0;
+            this.isShowAlternativeSchool = true;
+          } else {
+            this.isDisableHasHouse = false;
+            this.chosedHouseIndex = 1;
+            this.isShowAlternativeSchool = false;
+          }
+        } else {
+          Notify({ type: "warning", message: "未匹配到预报名学校！" });
+          this.registrationSchool = {
+            schoolName: "",
+            label: ""
+          };
+        }
+        Indicator.close();
+      });
     },
     canncelBirthday() {
       this.isShowBirthday = false;
@@ -834,6 +888,9 @@ export default {
     // 选择是否有房产
     choseHasHouse(index) {
       if (this.isDisabled || this.isDisableHasHouse) {
+        if (index === 1) {
+          Notify({ type: "warning", message: "该学校必须有房产!" });
+        }
         return;
       }
       this.chosedHouseIndex = index;
@@ -878,6 +935,22 @@ export default {
           this.step++;
         }
       } else if (this.step === 2) {
+        let vm = this;
+        var phoneReg = /^1[3456789]\d{9}$/;
+        if (
+          vm.parents[0].linkPhone &&
+          !phoneReg.test(Number(vm.parents[0].linkPhone))
+        ) {
+          Notify({ type: "warning", message: "请填写合法手机号再点击下一步!" });
+          return;
+        }
+        if (
+          vm.parents[1].linkPhone &&
+          !phoneReg.test(Number(vm.parents[1].linkPhone))
+        ) {
+          Notify({ type: "warning", message: "请填写合法手机号再点击下一步!" });
+          return;
+        }
         if (
           !vm.parents[0].idCard ||
           !vm.parents[0].linkPhone ||
@@ -886,7 +959,7 @@ export default {
         ) {
           Notify({
             type: "warning",
-            message: "请填写完整家人信息再点击下一步!"
+            message: "请填写完整家长信息再点击下一步!"
           });
         } else {
           this.step++;
@@ -914,7 +987,7 @@ export default {
       let vm = this;
       Dialog.confirm({
         title: "保存",
-        message: "确认要保存改学生信息吗？"
+        message: "确认要保存该学生信息吗？"
       })
         .then(() => {
           vm.saveConfirm(false);
@@ -1039,7 +1112,7 @@ export default {
       right: 10px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 12px;
+      font-size: 14px;
       color: #fff;
     }
   }
@@ -1391,6 +1464,11 @@ export default {
     position: absolute;
     left: 0;
     bottom: 0;
+  }
+  /deep/.van-dropdown-menu .van-dropdown-menu__bar {
+    height: 39px;
+    box-shadow: none;
+    background-color: none !important;
   }
 }
 </style>

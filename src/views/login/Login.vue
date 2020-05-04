@@ -15,7 +15,7 @@
           <div class="user-icon"></div>
           <input
             type="number"
-            placeholder="请填写用户名"
+            placeholder="请填写手机号码"
             @blur="blur"
             v-model="username"
           />
@@ -36,7 +36,7 @@
           <div class="user-icon"></div>
           <input
             type="number"
-            placeholder="请填写用户名"
+            placeholder="请填写手机号码"
             @blur="blur"
             v-model="adminUserID"
           />
