@@ -357,7 +357,9 @@
           v-model="otherRemark"
           :disabled="isDisabled"
           maxlength="100"
-        ></textarea>
+          @blur="blur"
+        >
+        </textarea>
       </div>
       <div class="commitment" style="margin-bottom:0" v-if="!isDisabled">
         <div class="item">
@@ -631,7 +633,7 @@ export default {
     // 获取备选学校
     getSchoolList() {
       let vm = this;
-      http.get(api.GETSCHOOLLIST,{},this).then(resp => {
+      http.get(api.GETSCHOOLLIST, {}, this).then(resp => {
         let schoolList = [];
         resp.data.data.map(v => {
           schoolList.push({
@@ -654,9 +656,14 @@ export default {
     getStudentDetail(id) {
       let vm = this;
       http
-        .get(api.GETSTUDENTDETAIL, {
-          ID: id
-        },{},this)
+        .get(
+          api.GETSTUDENTDETAIL,
+          {
+            ID: id
+          },
+          {},
+          this
+        )
         .then(resp => {
           let res = resp.data.data;
           if (res.forecastCode) {
@@ -683,11 +690,7 @@ export default {
           vm.lastSchoolName = res.preSchoolInformation
             ? res.preSchoolInformation
             : res.primarySchoolName;
-          if (res.preSchoolInformation) {
-            vm.registrationSchool.label = 1;
-          } else if (res.primarySchoolName) {
-            vm.registrationSchool.label = 2;
-          }
+          vm.registrationSchool.label = res.school ? res.school.label : "";
           vm.parents = res.parents;
           vm.chosedHouseIndex = res.property ? 0 : 1;
           vm.houseNature = res.houseNature;
@@ -706,7 +709,7 @@ export default {
           vm.alternativeSchoolID = Number(res.alternativeSchoolID);
           vm.alternativeSchoolName = res.alternativeSchoolName;
           // console.log(vm.alternativeSchoolID,vm.alternativeSchoolName)
-          if (res.schoolCode == "0401") {
+          if (res.school.schoolCode == "0401") {
             this.isDisableHasHouse = true;
             this.chosedHouseIndex = 0;
             this.isShowAlternativeSchool = true;
@@ -753,7 +756,7 @@ export default {
         birthday: this.todate(this.birthday)
       };
       Indicator.open();
-      http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params,this).then(resp => {
+      http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params, this).then(resp => {
         if (resp.data.data) {
           this.registrationSchool = resp.data.data;
           if (this.registrationSchool.schoolCode == "0401") {
@@ -805,7 +808,7 @@ export default {
         birthday: this.todate(this.birthday)
       };
       Indicator.open();
-      http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params,this).then(resp => {
+      http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params, this).then(resp => {
         if (resp.data.data) {
           this.registrationSchool = resp.data.data;
           if (this.registrationSchool.schoolCode == "0401") {
@@ -1042,7 +1045,7 @@ export default {
             : ""
       };
       console.log(JSON.stringify(params));
-      http.post(api.SAVEANDCOMMIT, params,this).then(resp => {
+      http.post(api.SAVEANDCOMMIT, params, this).then(resp => {
         if (resp.data.success) {
           Notify({
             type: "success",
