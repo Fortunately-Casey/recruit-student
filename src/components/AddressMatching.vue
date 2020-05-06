@@ -22,7 +22,9 @@
         </scroll>
       </div>
       <div class="selected" v-show="isShowCity">
-        <span class="selected-area" @click="selectCity">{{ selectAddress.chosedProvince }}</span>
+        <span class="selected-area" @click="selectCity">{{
+          selectAddress.chosedProvince
+        }}</span>
         <span class="selectCityButton">选择市</span>
       </div>
       <div class="select-street" v-if="isShowCity">
@@ -38,8 +40,12 @@
         </scroll>
       </div>
       <div class="selected" v-show="isShowTown">
-        <span class="selected-area" @click="selectCity">{{ selectAddress.chosedProvince }}</span>
-        <span class="selected-street" @click="selectNTStreet">{{ selectAddress.chosedCity }}</span>
+        <span class="selected-area" @click="selectCity">{{
+          selectAddress.chosedProvince
+        }}</span>
+        <span class="selected-street" @click="selectNTStreet">{{
+          selectAddress.chosedCity
+        }}</span>
         <span class="selectCityButton">选择区/县</span>
       </div>
       <div class="select-area" v-if="isShowTown">
@@ -87,7 +93,7 @@ export default {
     var vm = this;
     //获取省
     vm.loading = true;
-    http.get(api.GETPROVINCEAREA,{},this).then(resp => {
+    http.get(api.GETPROVINCEAREA, {}, this).then(resp => {
       vm.loading = false;
       vm.provinceList = resp.data.data;
     });
@@ -104,9 +110,13 @@ export default {
       vm.loading = true;
       vm.selectAddress.provinceID = item.id;
       http
-        .get(api.GETCITYLIST, {
-          parentID: item.id
-        },this)
+        .get(
+          api.GETCITYLIST,
+          {
+            parentID: item.id
+          },
+          this
+        )
         .then(resp => {
           vm.loading = false;
           vm.cityList = resp.data.data;
@@ -138,9 +148,13 @@ export default {
       vm.loading = true;
       vm.selectAddress.cityID = item.id;
       http
-        .get(api.GETCITYLIST, {
-          parentID: item.id
-        },this)
+        .get(
+          api.GETCITYLIST,
+          {
+            parentID: item.id
+          },
+          this
+        )
         .then(resp => {
           vm.loading = false;
           if (resp.data.data.length > 0) {

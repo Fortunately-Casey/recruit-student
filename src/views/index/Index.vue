@@ -6,7 +6,6 @@
         返回
         <div class="back-icon"></div>
       </div>
-      <!-- <span class="qrcode" @click="isShowQrcode = true">打卡二维码</span> -->
     </div>
     <div class="children-list" v-if="isReloadList">
       <div
@@ -31,6 +30,9 @@
               <div class="values">
                 <div class="child-name">{{ item.name }}</div>
                 <div class="idCard">{{ item.idCard }}</div>
+                <div class="audit-status">
+                  {{ returnAuditStatus(item.auditStatus) }}
+                </div>
               </div>
             </div>
           </div>
@@ -59,7 +61,7 @@ export default {
   methods: {
     getStudentByAdmissionID() {
       Indicator.open();
-      http.get(api.GETSTUDENTBYADMISSIONID,{},this).then(resp => {
+      http.get(api.GETSTUDENTBYADMISSIONID, {}, this).then(resp => {
         Indicator.close();
         this.childList = resp.data.data;
       });
@@ -77,6 +79,15 @@ export default {
         }
       });
     },
+    returnAuditStatus(status) {
+      if (status == 0) {
+        return "未审核";
+      } else if (status == 1) {
+        return "通过";
+      } else if (status == 2) {
+        return "未通过";
+      }
+    },
     deleteItem(item) {
       if (item.forecastCode) {
         Notify({ type: "danger", message: "提交后的子女信息不可删除" });
@@ -89,9 +100,13 @@ export default {
       })
         .then(() => {
           http
-            .delete(api.DELETESTUDENTBYID, {
-              studentID: item.id
-            },this)
+            .delete(
+              api.DELETESTUDENTBYID,
+              {
+                studentID: item.id
+              },
+              this
+            )
             .then(resp => {
               if (resp.data.success) {
                 Notify({
@@ -221,12 +236,19 @@ export default {
           flex: 1;
           display: flex;
           flex-direction: column;
+          position: relative;
           .child-name,
           .idCard {
             display: flex;
             flex: 1;
             align-items: center;
             font-size: 14px;
+          }
+          .audit-status {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            font-size: 12px;
           }
         }
       }

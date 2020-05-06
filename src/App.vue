@@ -41,7 +41,7 @@ input {
   margin-top: 5px;
   border-radius: 0;
   font-size: 14px;
-   -webkit-appearance: none; 
+  -webkit-appearance: none;
 }
 
 input[type="text"]:focus {

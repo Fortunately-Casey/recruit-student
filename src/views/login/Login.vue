@@ -137,7 +137,7 @@ export default {
         password: vm.password,
         confirmPassword: vm.confirmPassword
       };
-      http.post(api.REGISTERED, params,this).then(resp => {
+      http.post(api.REGISTERED, params, this).then(resp => {
         if (resp.data.success) {
           Notify({ type: "success", message: "注册成功" });
           vm.adminUserID = "";

@@ -902,11 +902,11 @@ export default {
     // 提交
     confirm() {
       let vm = this;
-      if (!vm.otherRemark) {
-        Notify({ type: "warning", message: "请填写其他备注信息!" });
-        return;
-      }
-      if (!this.accept) {
+      // if (!vm.otherRemark) {
+      //   Notify({ type: "warning", message: "请填写其他备注信息!" });
+      //   return;
+      // }
+      if (!vm.accept) {
         Notify({ type: "warning", message: "请阅读并勾选承诺书!" });
         return;
       }

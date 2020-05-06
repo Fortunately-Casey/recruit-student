@@ -17,6 +17,7 @@ http.post = function(apiUrl, params, vue) {
         vue.$router.push({
           path: "/login"
         });
+        return;
       }
       return Promise.resolve(resp);
     })
@@ -41,6 +42,7 @@ http.get = function(apiUrl, params, vue) {
         vue.$router.push({
           path: "/login"
         });
+        return;
       }
       return Promise.resolve(resp);
     })
@@ -64,6 +66,7 @@ http.delete = function(apiUrl, params, vue) {
         vue.$router.push({
           path: "/login"
         });
+        return;
       }
       return Promise.resolve(resp);
     })
