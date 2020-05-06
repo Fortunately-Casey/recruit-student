@@ -94,7 +94,7 @@
           <div class="value">
             <van-dropdown-menu
               direction="up"
-              :style="'width:100px;height:40px;float:right'"
+              :style="'width:180px;height:40px;float:right'"
             >
               <van-dropdown-item
                 v-model="alternativeSchoolID"
@@ -631,7 +631,7 @@ export default {
     // 获取备选学校
     getSchoolList() {
       let vm = this;
-      http.get(api.GETSCHOOLLIST).then(resp => {
+      http.get(api.GETSCHOOLLIST,{},this).then(resp => {
         let schoolList = [];
         resp.data.data.map(v => {
           schoolList.push({
@@ -656,7 +656,7 @@ export default {
       http
         .get(api.GETSTUDENTDETAIL, {
           ID: id
-        })
+        },{},this)
         .then(resp => {
           let res = resp.data.data;
           if (res.forecastCode) {
@@ -706,7 +706,7 @@ export default {
           vm.alternativeSchoolID = Number(res.alternativeSchoolID);
           vm.alternativeSchoolName = res.alternativeSchoolName;
           // console.log(vm.alternativeSchoolID,vm.alternativeSchoolName)
-          if (res.schoolID == 4 || res.schoolID == 1) {
+          if (res.schoolCode == "0401") {
             this.isDisableHasHouse = true;
             this.chosedHouseIndex = 0;
             this.isShowAlternativeSchool = true;
@@ -753,13 +753,10 @@ export default {
         birthday: this.todate(this.birthday)
       };
       Indicator.open();
-      http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params).then(resp => {
+      http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params,this).then(resp => {
         if (resp.data.data) {
           this.registrationSchool = resp.data.data;
-          if (
-            this.registrationSchool.schoolID == 4 ||
-            this.registrationSchool.schoolID == 1
-          ) {
+          if (this.registrationSchool.schoolCode == "0401") {
             this.isDisableHasHouse = true;
             this.chosedHouseIndex = 0;
             this.isShowAlternativeSchool = true;
@@ -808,13 +805,10 @@ export default {
         birthday: this.todate(this.birthday)
       };
       Indicator.open();
-      http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params).then(resp => {
+      http.get(api.GETSCHOOLBYSMALLCOMMUNITYID, params,this).then(resp => {
         if (resp.data.data) {
           this.registrationSchool = resp.data.data;
-          if (
-            this.registrationSchool.schoolID == 4 ||
-            this.registrationSchool.schoolID == 1
-          ) {
+          if (this.registrationSchool.schoolCode == "0401") {
             this.isDisableHasHouse = true;
             this.chosedHouseIndex = 0;
             this.isShowAlternativeSchool = true;
@@ -1048,7 +1042,7 @@ export default {
             : ""
       };
       console.log(JSON.stringify(params));
-      http.post(api.SAVEANDCOMMIT, params).then(resp => {
+      http.post(api.SAVEANDCOMMIT, params,this).then(resp => {
         if (resp.data.success) {
           Notify({
             type: "success",

@@ -112,7 +112,7 @@ export default {
         password: vm.userPW,
         type: 1
       };
-      http.post(api.Login, params).then(resp => {
+      http.post(api.Login, params, this).then(resp => {
         if (resp.data.success) {
           Notify({ type: "success", message: "登录成功" });
           window.localStorage.setItem("token", resp.data.data.token);
@@ -137,7 +137,7 @@ export default {
         password: vm.password,
         confirmPassword: vm.confirmPassword
       };
-      http.post(api.REGISTERED, params).then(resp => {
+      http.post(api.REGISTERED, params,this).then(resp => {
         if (resp.data.success) {
           Notify({ type: "success", message: "注册成功" });
           vm.adminUserID = "";

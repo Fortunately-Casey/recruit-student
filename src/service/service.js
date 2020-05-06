@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 import axios from "axios";
 import { getURL } from "@/common/tool/tool";
 
 let http = {};
-http.post = function(apiUrl, params) {
+http.post = function(apiUrl, params, vue) {
   let token = window.localStorage.getItem("token");
   const url = getURL(apiUrl);
   return axios
@@ -12,6 +13,11 @@ http.post = function(apiUrl, params) {
       }
     })
     .then(resp => {
+      if (resp.data.errorCode == "03009") {
+        vue.$router.push({
+          path: "/login"
+        });
+      }
       return Promise.resolve(resp);
     })
     .catch(err => {
@@ -19,7 +25,7 @@ http.post = function(apiUrl, params) {
     });
 };
 
-http.get = function(apiUrl, params) {
+http.get = function(apiUrl, params, vue) {
   let token = window.localStorage.getItem("token");
   const url = getURL(apiUrl);
   return axios
@@ -30,6 +36,12 @@ http.get = function(apiUrl, params) {
       }
     })
     .then(resp => {
+      console.log();
+      if (resp.data.errorCode == "03009") {
+        vue.$router.push({
+          path: "/login"
+        });
+      }
       return Promise.resolve(resp);
     })
     .catch(err => {
@@ -37,7 +49,7 @@ http.get = function(apiUrl, params) {
     });
 };
 
-http.delete = function(apiUrl, params) {
+http.delete = function(apiUrl, params, vue) {
   let token = window.localStorage.getItem("token");
   const url = getURL(apiUrl);
   return axios
@@ -48,6 +60,11 @@ http.delete = function(apiUrl, params) {
       }
     })
     .then(resp => {
+      if (resp.data.errorCode == "03009") {
+        vue.$router.push({
+          path: "/login"
+        });
+      }
       return Promise.resolve(resp);
     })
     .catch(err => {

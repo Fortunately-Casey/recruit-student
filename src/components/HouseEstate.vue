@@ -90,7 +90,7 @@ export default {
     var vm = this;
     //获取街道
     vm.loading = true;
-    http.get(api.GETSTREETLIST).then(resp => {
+    http.get(api.GETSTREETLIST,{},this).then(resp => {
       vm.loading = false;
       vm.streetList = resp.data.data;
     });
@@ -108,7 +108,7 @@ export default {
       http
         .get(api.GETCOMMUNITYLIST, {
           streetID: item.streetID
-        })
+        },this)
         .then(resp => {
           vm.loading = false;
           vm.cityList = resp.data.data;
@@ -142,7 +142,7 @@ export default {
       http
         .get(api.GETSMALLCOMMUNITYBYCOMMUNITYID, {
           communityID: item.id
-        })
+        },this)
         .then(resp => {
           vm.loading = false;
           if (resp.data.data.length > 0) {

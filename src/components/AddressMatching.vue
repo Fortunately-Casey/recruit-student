@@ -87,7 +87,7 @@ export default {
     var vm = this;
     //获取省
     vm.loading = true;
-    http.get(api.GETPROVINCEAREA).then(resp => {
+    http.get(api.GETPROVINCEAREA,{},this).then(resp => {
       vm.loading = false;
       vm.provinceList = resp.data.data;
     });
@@ -106,7 +106,7 @@ export default {
       http
         .get(api.GETCITYLIST, {
           parentID: item.id
-        })
+        },this)
         .then(resp => {
           vm.loading = false;
           vm.cityList = resp.data.data;
@@ -140,7 +140,7 @@ export default {
       http
         .get(api.GETCITYLIST, {
           parentID: item.id
-        })
+        },this)
         .then(resp => {
           vm.loading = false;
           if (resp.data.data.length > 0) {

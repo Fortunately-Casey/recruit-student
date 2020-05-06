@@ -59,7 +59,7 @@ export default {
   methods: {
     getStudentByAdmissionID() {
       Indicator.open();
-      http.get(api.GETSTUDENTBYADMISSIONID).then(resp => {
+      http.get(api.GETSTUDENTBYADMISSIONID,{},this).then(resp => {
         Indicator.close();
         this.childList = resp.data.data;
       });
@@ -91,7 +91,7 @@ export default {
           http
             .delete(api.DELETESTUDENTBYID, {
               studentID: item.id
-            })
+            },this)
             .then(resp => {
               if (resp.data.success) {
                 Notify({
