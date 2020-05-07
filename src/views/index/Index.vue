@@ -181,6 +181,8 @@ export default {
     }
   }
   .children-list {
+    max-height: 400px;
+    overflow-y: auto;
     .item {
       height: 100px;
       padding: 0 20px;

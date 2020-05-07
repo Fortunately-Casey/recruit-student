@@ -358,8 +358,7 @@
           :disabled="isDisabled"
           maxlength="100"
           @blur="blur"
-        >
-        </textarea>
+        ></textarea>
       </div>
       <div class="commitment" style="margin-bottom:0" v-if="!isDisabled">
         <div class="item">
@@ -553,7 +552,7 @@ export default {
       purchaseDate: new Date(),
       selectBirthday: new Date(),
       minDate: new Date(2000, 1, 1),
-      maxDate: new Date(2025, 1, 1),
+      maxDate: new Date(2055, 1, 1),
       isShowAffirm: false,
       isShowPurchaseDate: false,
       sexOption: [
@@ -949,10 +948,14 @@ export default {
           return;
         }
         if (
-          !vm.parents[0].idCard ||
-          !vm.parents[0].linkPhone ||
-          !vm.parents[0].name ||
-          !vm.parents[0].workAddress
+          (!vm.parents[0].idCard ||
+            !vm.parents[0].linkPhone ||
+            !vm.parents[0].name ||
+            !vm.parents[0].workAddress) &&
+          (!vm.parents[1].idCard ||
+            !vm.parents[1].linkPhone ||
+            !vm.parents[1].name ||
+            !vm.parents[1].workAddress)
         ) {
           Notify({
             type: "warning",
