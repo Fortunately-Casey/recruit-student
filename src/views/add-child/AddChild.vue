@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="add-child"
-    :style="{ height: bodyHeight ? bodyHeight + 'px' : '100%' }"
-  >
+  <div id="add-child" :style="{ height: bodyHeight ? bodyHeight + 'px' : '100%' }">
     <div class="header">
       {{ returnHeaderInfo() }}
       <div class="back" @click="topStep">
@@ -16,35 +13,20 @@
         <div class="item">
           <div class="name space">姓名</div>
           <div class="value">
-            <input
-              type="text"
-              v-model="name"
-              @blur="blur"
-              maxlength="15"
-              :disabled="isDisabled"
-            />
+            <input type="text" v-model="name" @blur="blur" maxlength="15" :disabled="isDisabled" />
           </div>
         </div>
         <div class="item">
           <div class="name">身份证号</div>
           <div class="value">
-            <input
-              type="text"
-              v-model="idCard"
-              @blur="blur"
-              :disabled="isDisabled"
-            />
+            <input type="text" v-model="idCard" @blur="blur" :disabled="isDisabled" />
           </div>
         </div>
         <div class="item">
           <div class="name space">性别</div>
           <div class="value">
             <van-dropdown-menu :style="'width:100px;height:40px;float:right'">
-              <van-dropdown-item
-                v-model="sex"
-                :options="sexOption"
-                :disabled="isDisabled"
-              />
+              <van-dropdown-item v-model="sex" :options="sexOption" :disabled="isDisabled" />
             </van-dropdown-menu>
           </div>
         </div>
@@ -92,10 +74,7 @@
         <div class="item" v-if="isShowAlternativeSchool">
           <div class="name">备选学校</div>
           <div class="value">
-            <van-dropdown-menu
-              direction="up"
-              :style="'width:180px;height:40px;float:right'"
-            >
+            <van-dropdown-menu direction="up" :style="'width:180px;height:40px;float:right'">
               <van-dropdown-item
                 v-model="alternativeSchoolID"
                 :options="alternativeOption"
@@ -108,9 +87,7 @@
       </div>
       <div class="old-school" v-if="registrationSchool.label">
         <div class="item">
-          <div class="name">
-            {{ registrationSchool.label === 1 ? "幼儿园名称" : "小学名称" }}
-          </div>
+          <div class="name">{{ registrationSchool.label === 1 ? "幼儿园名称" : "小学名称" }}</div>
           <div class="value">
             <input
               type="text"
@@ -132,12 +109,7 @@
         <div class="item">
           <div class="name">姓名</div>
           <div class="value">
-            <input
-              type="text"
-              @blur="blur"
-              v-model="parents[0].name"
-              :disabled="isDisabled"
-            />
+            <input type="text" @blur="blur" v-model="parents[0].name" :disabled="isDisabled" />
           </div>
         </div>
         <div class="item">
@@ -155,34 +127,19 @@
         <div class="item">
           <div class="name">身份证号</div>
           <div class="value">
-            <input
-              type="text"
-              v-model="parents[0].idCard"
-              @blur="blur"
-              :disabled="isDisabled"
-            />
+            <input type="text" v-model="parents[0].idCard" @blur="blur" :disabled="isDisabled" />
           </div>
         </div>
         <div class="item">
           <div class="name">联系电话</div>
           <div class="value">
-            <input
-              type="number"
-              v-model="parents[0].linkPhone"
-              @blur="blur"
-              :disabled="isDisabled"
-            />
+            <input type="number" v-model="parents[0].linkPhone" @blur="blur" :disabled="isDisabled" />
           </div>
         </div>
         <div class="item">
           <div class="name">工作单位</div>
           <div class="value">
-            <input
-              type="text"
-              v-model="parents[0].workAddress"
-              @blur="blur"
-              :disabled="isDisabled"
-            />
+            <input type="text" v-model="parents[0].workAddress" @blur="blur" :disabled="isDisabled" />
           </div>
         </div>
       </div>
@@ -214,34 +171,19 @@
         <div class="item">
           <div class="name">身份证号</div>
           <div class="value">
-            <input
-              type="text"
-              @blur="blur"
-              v-model="parents[1].idCard"
-              :disabled="isDisabled"
-            />
+            <input type="text" @blur="blur" v-model="parents[1].idCard" :disabled="isDisabled" />
           </div>
         </div>
         <div class="item">
           <div class="name">联系电话</div>
           <div class="value">
-            <input
-              type="number"
-              @blur="blur"
-              v-model="parents[1].linkPhone"
-              :disabled="isDisabled"
-            />
+            <input type="number" @blur="blur" v-model="parents[1].linkPhone" :disabled="isDisabled" />
           </div>
         </div>
         <div class="item">
           <div class="name">工作单位</div>
           <div class="value">
-            <input
-              type="text"
-              @blur="blur"
-              v-model="parents[1].workAddress"
-              :disabled="isDisabled"
-            />
+            <input type="text" @blur="blur" v-model="parents[1].workAddress" :disabled="isDisabled" />
           </div>
         </div>
       </div>
@@ -275,36 +217,25 @@
         <div class="item">
           <div class="name">房产所有人</div>
           <div class="value">
-            <input
-              type="text"
-              @blur="blur"
-              v-model="houseOwner"
-              :disabled="isDisabled"
-            />
+            <input type="text" @blur="blur" v-model="houseOwner" :disabled="isDisabled" />
           </div>
         </div>
         <div class="item">
           <div class="name">取得/购买时间</div>
-          <div class="value" @click="choseGetHouseTime">
-            {{ todate(buyDate) }}
-          </div>
+          <div class="value" @click="choseGetHouseTime">{{ todate(buyDate) }}</div>
         </div>
       </div>
       <div class="house-property" v-if="chosedHouseIndex === 1">
         <div class="item">
           <div class="name">居住证有效期</div>
           <div class="value">
-            <div class="value" @click="showResidence">
-              {{ todate(permitResidencePeriod) }}
-            </div>
+            <div class="value" @click="showResidence">{{ todate(permitResidencePeriod) }}</div>
           </div>
         </div>
         <div class="item">
           <div class="name">劳务合同期限</div>
           <div class="value">
-            <div class="value" @click="showLaborContractPeriod">
-              {{ todate(laborContractPeriod) }}
-            </div>
+            <div class="value" @click="showLaborContractPeriod">{{ todate(laborContractPeriod) }}</div>
           </div>
         </div>
       </div>
@@ -313,12 +244,7 @@
           <div class="name">房产登记号/房产发票号</div>
         </div>
         <div class="item">
-          <input
-            type="text"
-            @blur="blur"
-            v-model="houseNumbers"
-            :disabled="isDisabled"
-          />
+          <input type="text" @blur="blur" v-model="houseNumbers" :disabled="isDisabled" />
         </div>
       </div>
       <div class="house-number" v-if="chosedHouseIndex === 1">
@@ -326,12 +252,7 @@
           <div class="name">养老保险单位所在地</div>
         </div>
         <div class="item">
-          <input
-            type="text"
-            @blur="blur"
-            v-model="pensionUnitsAddress"
-            :disabled="isDisabled"
-          />
+          <input type="text" @blur="blur" v-model="pensionUnitsAddress" :disabled="isDisabled" />
         </div>
       </div>
     </div>
@@ -364,29 +285,22 @@
         <div class="item">
           <div class="name">报名承诺书</div>
         </div>
-        <div class="commit-text">
-          本人承诺：如有弄虚作假，提供虚假材料的，一经发现，对其已入学子女作退学或转学处理，由此产生的不良影响，本人愿意承担一切后果
-        </div>
+        <div class="commit-text">本人承诺：如有弄虚作假，提供虚假材料的，一经发现，对其已入学子女作退学或转学处理，由此产生的不良影响，本人愿意承担一切后果</div>
       </div>
       <div class="accept" :class="accept ? 'chosed' : ''" v-if="!isDisabled">
-        <van-checkbox v-model="accept" shape="square"
-          >我已阅读并接受</van-checkbox
-        >
+        <van-checkbox v-model="accept" shape="square">我已阅读并接受</van-checkbox>
       </div>
       <div
         class="commit-button"
         :class="accept ? 'enable' : 'disable'"
         v-if="!isDisabled && step === 4"
         @click="confirm"
-      >
-        提交（{{ step }}/4）
-      </div>
+      >提交（{{ step }}/4）</div>
       <van-popup v-model="isShowAffirm" round closeable>
         <div class="commit-affirm">
           <div class="text">
             预报名申请提交后信息
-            <span style="color:#ff3636">不可修改</span
-            >，请仔细核对填报信息后提交！
+            <span style="color:#ff3636">不可修改</span>，请仔细核对填报信息后提交！
           </div>
           <div class="buttons">
             <div class="canncel" @click="isShowAffirm = false">再想想</div>
@@ -395,19 +309,13 @@
         </div>
       </van-popup>
     </div>
-    <div class="step-button" v-if="step !== 4" @click="nextStep">
-      下一步（{{ step }}/4）
-    </div>
+    <div class="step-button" v-if="step !== 4" @click="nextStep">下一步（{{ step }}/4）</div>
     <address-matching
       :isShow="isShowAddress"
       @choseAddress="choseAddress"
       @closeAddress="closeAddress"
     ></address-matching>
-    <house-estate
-      :isShow="isShowHouse"
-      @choseHouse="choseHouse"
-      @closeHouse="closeHouse"
-    ></house-estate>
+    <house-estate :isShow="isShowHouse" @choseHouse="choseHouse" @closeHouse="closeHouse"></house-estate>
     <div class="date-time" v-if="isShowPurchaseDate">
       <van-datetime-picker
         v-model="purchaseDate"
@@ -712,6 +620,10 @@ export default {
             this.isDisableHasHouse = true;
             this.chosedHouseIndex = 0;
             this.isShowAlternativeSchool = true;
+          } else if (res.school.schoolCode == "01") {
+            this.isDisableHasHouse = true;
+            this.chosedHouseIndex = 0;
+            this.isShowAlternativeSchool = false;
           } else {
             this.isDisableHasHouse = false;
             this.chosedHouseIndex = 1;
@@ -762,13 +674,17 @@ export default {
             this.isDisableHasHouse = true;
             this.chosedHouseIndex = 0;
             this.isShowAlternativeSchool = true;
+          } else if (this.registrationSchool.schoolCode == "01") {
+            this.isDisableHasHouse = true;
+            this.chosedHouseIndex = 0;
+            this.isShowAlternativeSchool = false;
           } else {
             this.isDisableHasHouse = false;
             this.chosedHouseIndex = 1;
             this.isShowAlternativeSchool = false;
           }
         } else {
-          Notify({ type: "warning", message: "未匹配到预报名学校！" });
+          Notify({ type: "warning", message: resp.data.message });
           this.registrationSchool = {
             schoolName: "",
             label: ""
@@ -814,13 +730,17 @@ export default {
             this.isDisableHasHouse = true;
             this.chosedHouseIndex = 0;
             this.isShowAlternativeSchool = true;
+          } else if (this.registrationSchool.schoolCode == "01") {
+            this.isDisableHasHouse = true;
+            this.chosedHouseIndex = 0;
+            this.isShowAlternativeSchool = false;
           } else {
             this.isDisableHasHouse = false;
             this.chosedHouseIndex = 1;
             this.isShowAlternativeSchool = false;
           }
         } else {
-          Notify({ type: "warning", message: "未匹配到预报名学校！" });
+          Notify({ type: "warning", message: resp.data.message });
           this.registrationSchool = {
             schoolName: "",
             label: ""
@@ -1039,15 +959,14 @@ export default {
         operateCommit: commit,
         auditStatus: 0,
         alternativeSchoolID:
-          vm.registrationSchool.schoolName == "实验小学"
+          vm.registrationSchool.schoolCode == "0401"
             ? vm.alternativeSchoolID
             : "",
         alternativeSchoolName:
-          vm.registrationSchool.schoolName == "实验小学"
+          vm.registrationSchool.schoolCode == "0401"
             ? vm.alternativeSchoolName
             : ""
       };
-      console.log(JSON.stringify(params));
       http.post(api.SAVEANDCOMMIT, params, this).then(resp => {
         if (resp.data.success) {
           Notify({
